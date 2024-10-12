@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
 	"git.inpt.fr/churros/notella"
 	"git.inpt.fr/churros/notella/openapi"
@@ -24,9 +23,11 @@ type Configuration struct {
 	ChurrosDatabaseURL string `env:"DATABASE_URL"`
 }
 
+var Version = "DEV"
+
 func main() {
 	figure.NewColorFigure("Notella", "", "yellow", true).Print()
-	fmt.Println("%40s", fmt.Sprintf("v%s", notella.Version))
+	fmt.Printf("%38s\n", fmt.Sprintf("美味しそう〜 v%s", Version))
 	fmt.Println()
 
 	if _, err := os.Stat(".env"); err == nil {

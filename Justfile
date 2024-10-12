@@ -6,7 +6,11 @@ dev:
 
 build:
 	go mod tidy
-	go build -ldflags="-X notella.Version={{current_version}}" -o bin/server server/*.go
+	go build -v -ldflags="-X main.Version={{current_version}}" -o bin/server server/*.go
+
+install:
+	just build
+	cp bin/server ~/.local/bin/notella
 
 updateschema:
 	curl -fsSL https://git.inpt.fr/churros/churros/-/raw/main/packages/db/prisma/schema.prisma -o schema.prisma
