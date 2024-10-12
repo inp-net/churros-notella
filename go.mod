@@ -7,14 +7,12 @@ require (
 	github.com/ewen-lbh/label-logger-go v0.0.0-20241011201023-2c63f6a50d58
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
-	github.com/segmentio/encoding v0.4.0
 	github.com/shopspring/decimal v1.4.0
 	github.com/steebchen/prisma-client-go v0.42.0
 )
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/segmentio/asm v1.1.3 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 )
 
@@ -25,5 +23,5 @@ require (
 	github.com/gosuri/uiprogress v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
-	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
 )

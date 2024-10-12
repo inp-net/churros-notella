@@ -1,12 +1,10 @@
 package notella
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"git.inpt.fr/churros/notella/db"
-	"github.com/SherClockHolmes/webpush-go"
 )
 
 var prisma = db.NewClient()
@@ -45,29 +43,4 @@ func (id *ChurrosId) UnmarshalText(text []byte) error {
 	id.LocalID = parsed.LocalID
 
 	return nil
-}
-
-func notificationSubscriptionsOf(userUid string) (subscriptions []webpush.Subscription, err error) {
-	if err := prisma.Prisma.Connect(); err != nil {
-		return nil, fmt.Errorf("could not connect to prisma: %w", err)
-	}
-	subs, err := prisma.NotificationSubscription.FindMany(
-		db.NotificationSubscription.Owner.Where(db.User.UID.Equals(userUid)),
-	).Exec(context.Background())
-
-	if err != nil {
-		return subscriptions, fmt.Errorf("while getting notification subscriptions from database: %w", err)
-	}
-
-	for _, sub := range subs {
-		subscriptions = append(subscriptions, webpush.Subscription{
-			Endpoint: sub.Endpoint,
-			Keys: webpush.Keys{
-				Auth:   sub.AuthKey,
-				P256dh: sub.P256DhKey,
-			},
-		})
-	}
-
-	return subscriptions, nil
 }

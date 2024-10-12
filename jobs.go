@@ -1,7 +1,6 @@
 package notella
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -17,13 +16,6 @@ func (job ScheduledJob) ShouldRun() bool {
 }
 
 func (job ScheduledJob) Run() error {
-	subscriptions, err := notificationSubscriptionsOf("versairea")
-	if err != nil {
-		return fmt.Errorf("while getting notification subscriptions for %s: %w", "versairea", err)
-	}
-
-	fmt.Printf("%+v\n", subscriptions)
-
 	switch job.Event {
 	// TODO
 	}
