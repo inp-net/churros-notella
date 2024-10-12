@@ -1,3 +1,5 @@
+//go:generate go run github.com/steebchen/prisma-client-go generate
+
 package main
 
 import (
@@ -9,6 +11,8 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/common-nighthawk/go-figure"
 	ll "github.com/ewen-lbh/label-logger-go"
+	"github.com/google/uuid"
+	"github.com/segmentio/encoding/json"
 )
 
 type Configuration struct {
@@ -20,6 +24,7 @@ type Configuration struct {
 type PostScheduleRequest struct {
 	When      time.Time         `json:"when"`
 	Ressource notella.ChurrosId `json:"ressource"`
+	Event     notella.Event     `json:"event"`
 }
 
 func main() {
@@ -38,8 +43,24 @@ func main() {
 	ll.Log("", "reset", "Poll interval:   [bold]%d[reset] ms", config.PollInterval)
 	fmt.Println()
 
-	http.HandleFunc("POST /schedule/{when}", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("POST /schedule", func(w http.ResponseWriter, r *http.Request) {
+		var req PostScheduleRequest
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			ll.ErrorDisplay("could not decode json", err)
+			http.Error(w, "could not decode json", http.StatusBadRequest)
+			return
+		}
 
+		job := notella.ScheduledJob{
+			ID:     uuid.New().String(),
+			When:   req.When,
+			Object: req.Ressource,
+			Event:  req.Event,
+		}
+
+		job.Schedule()
+		w.WriteHeader(http.StatusCreated)
 	})
 
 	ll.Info("starting scheduler")

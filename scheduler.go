@@ -1,5 +1,9 @@
 package notella
 
+import (
+	ll "github.com/ewen-lbh/label-logger-go"
+)
+
 var schedules = make(map[string]ScheduledJob)
 
 func (job ScheduledJob) Unschedule() {
@@ -20,7 +24,9 @@ func StartScheduler() {
 	for {
 		for _, job := range schedules {
 			if job.ShouldRun() {
-				job.Run()
+				ll.Log("Running", "cyan", "job for %s on %s", job.Event, job.Object)
+				job.Unschedule()
+				go job.Run()
 			}
 		}
 	}
