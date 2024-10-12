@@ -20,14 +20,23 @@ type ScheduleRequest struct {
 	When     time.Time         `json:"when"`
 }
 
+// PostScheduleBatchJSONBody defines parameters for PostScheduleBatch.
+type PostScheduleBatchJSONBody = []ScheduleRequest
+
 // PostScheduleJSONRequestBody defines body for PostSchedule for application/json ContentType.
 type PostScheduleJSONRequestBody = ScheduleRequest
+
+// PostScheduleBatchJSONRequestBody defines body for PostScheduleBatch for application/json ContentType.
+type PostScheduleBatchJSONRequestBody = PostScheduleBatchJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (POST /schedule)
 	PostSchedule(w http.ResponseWriter, r *http.Request)
+
+	// (POST /schedule/batch)
+	PostScheduleBatch(w http.ResponseWriter, r *http.Request)
 }
 
 // ServerInterfaceWrapper converts contexts to parameters.
@@ -44,6 +53,20 @@ func (siw *ServerInterfaceWrapper) PostSchedule(w http.ResponseWriter, r *http.R
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.PostSchedule(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
+// PostScheduleBatch operation middleware
+func (siw *ServerInterfaceWrapper) PostScheduleBatch(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostScheduleBatch(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -174,6 +197,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	}
 
 	m.HandleFunc("POST "+options.BaseURL+"/schedule", wrapper.PostSchedule)
+	m.HandleFunc("POST "+options.BaseURL+"/schedule/batch", wrapper.PostScheduleBatch)
 
 	return m
 }

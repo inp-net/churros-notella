@@ -2,27 +2,27 @@ package notella
 
 import (
 	ll "github.com/ewen-lbh/label-logger-go"
+	"github.com/orcaman/concurrent-map/v2"
 )
 
-var schedules = make(map[string]ScheduledJob)
+var schedules = cmap.New[ScheduledJob]()
 
 func (job ScheduledJob) Unschedule() {
-	delete(schedules, job.ID)
+	schedules.Remove(job.ID)
 }
 
 func (job ScheduledJob) Schedule() {
-	schedules[job.ID] = job
+	schedules.Set(job.ID, job)
 }
 
 func (job ScheduledJob) IsScheduled() bool {
-	_, ok := schedules[job.ID]
-	return ok
+	return schedules.Has(job.ID)
 }
 
 // StartScheduler starts the scheduler loop, which runs forever
 func StartScheduler() {
 	for {
-		for _, job := range schedules {
+		for _, job := range schedules.Items() {
 			if job.ShouldRun() {
 				ll.Log("Running", "cyan", "job for %s on %s", job.Event, job.Object)
 				job.Unschedule()

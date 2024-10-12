@@ -7,6 +7,7 @@ require (
 	github.com/ewen-lbh/label-logger-go v0.0.0-20241011201023-2c63f6a50d58
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/shopspring/decimal v1.4.0
 	github.com/steebchen/prisma-client-go v0.42.0
 )
