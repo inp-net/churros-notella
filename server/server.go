@@ -1,14 +1,11 @@
 package main
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 	"sync"
 
 	"git.inpt.fr/churros/notella"
 	"git.inpt.fr/churros/notella/openapi"
-	ll "github.com/ewen-lbh/label-logger-go"
 	"github.com/google/uuid"
 )
 
@@ -20,20 +17,7 @@ func NewServer() Server {
 
 func (Server) PostSchedule(w http.ResponseWriter, r *http.Request) {
 	var req openapi.PostScheduleJSONRequestBody
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		ll.ErrorDisplay("could not read request body: %w", err)
-		http.Error(w, "could not read request body", http.StatusBadRequest)
-	}
-
-	err = json.Unmarshal(body, &req)
-	if err != nil {
-		ll.ErrorDisplay("could not decode json", err)
-		http.Error(w, "could not decode json", http.StatusBadRequest)
-		return
-	}
-
-	ll.Debug("got request POST /schedule %+v", req)
+	decodeRequest(w, r, &req)
 
 	job := notella.ScheduledJob{
 		ID:     uuid.New().String(),
@@ -44,25 +28,11 @@ func (Server) PostSchedule(w http.ResponseWriter, r *http.Request) {
 
 	job.Schedule()
 	w.WriteHeader(http.StatusCreated)
-
 }
 
 func (Server) PostScheduleBatch(w http.ResponseWriter, r *http.Request) {
 	var req openapi.PostScheduleBatchJSONRequestBody
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		ll.ErrorDisplay("could not read request body: %w", err)
-		http.Error(w, "could not read request body", http.StatusBadRequest)
-	}
-
-	err = json.Unmarshal(body, &req)
-	if err != nil {
-		ll.ErrorDisplay("could not decode json", err)
-		http.Error(w, "could not decode json", http.StatusBadRequest)
-		return
-	}
-
-	ll.Debug("got request POST /schedule/batch %+v", req)
+	decodeRequest(w, r, &req)
 
 	var wg sync.WaitGroup
 
@@ -75,13 +45,12 @@ func (Server) PostScheduleBatch(w http.ResponseWriter, r *http.Request) {
 			Event:  schedule.Event,
 		}
 
-		go func (job notella.ScheduledJob, wg *sync.WaitGroup) { 
+		go func(job notella.ScheduledJob, wg *sync.WaitGroup) {
 			job.Schedule()
 			wg.Done()
 		}(job, &wg)
 	}
 
 	wg.Wait()
-
 	w.WriteHeader(http.StatusCreated)
 }
