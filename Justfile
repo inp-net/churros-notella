@@ -15,8 +15,9 @@ install:
 updateschema:
 	curl -fsSL https://git.inpt.fr/churros/churros/-/raw/main/packages/db/prisma/schema.prisma -o schema.prisma
 
-updateopenapi:
-	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen --config=openapi-config.yaml openapi.yaml
+genprisma:
+    go get github.com/steebchen/prisma-client-go 
+    go run github.com/steebchen/prisma-client-go generate
 
 generate:
 	just updateschema

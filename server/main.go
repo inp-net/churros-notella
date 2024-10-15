@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"git.inpt.fr/churros/notella"
-	"git.inpt.fr/churros/notella/openapi"
 	"github.com/caarlos0/env/v11"
 	"github.com/common-nighthawk/go-figure"
 	ll "github.com/ewen-lbh/label-logger-go"
@@ -55,11 +54,4 @@ func main() {
 	ll.Info("starting scheduler")
 	go notella.StartScheduler()
 
-	ll.Info("starting server on port %d", config.Port)
-	mux := http.NewServeMux()
-	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", config.Port),
-		Handler: openapi.HandlerFromMux(NewServer(), mux),
-	}
-	server.ListenAndServe()
 }

@@ -5,7 +5,6 @@ go 1.23.2
 require (
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/ewen-lbh/label-logger-go v0.1.1
-	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/shopspring/decimal v1.4.0
