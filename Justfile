@@ -1,6 +1,7 @@
 current_version := `git describe --tags --abbrev=0 | cut -c 2-`
 
 dev:
+	docker compose up -d
 	go mod tidy
 	go run server/*.go
 
