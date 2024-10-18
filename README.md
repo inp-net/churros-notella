@@ -10,3 +10,4 @@ just genprisma
 # start
 just 
 ```
+![](./principle.svg)
