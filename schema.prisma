@@ -1,21 +1,9 @@
-// generator client {
-//   provider        = "prisma-client-js"
-//   previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
-//   output          = "../src/client"
-// }
-
-// See https://pothos-graphql.dev/docs/plugins/prisma#setup
-// generator pothos {
-//   provider     = "prisma-pothos-types"
-//   clientOutput = "@churros/db/prisma"
-//   output       = "../src/pothos/index.d.ts"
-//   prismaUtils  = true
-// }
-
 generator goprisma {
   provider        = "go run github.com/steebchen/prisma-client-go"
   previewFeatures = ["fullTextSearch", "postgresqlExtensions"]
 }
+
+// See https://pothos-graphql.dev/docs/plugins/prisma#setup
 
 datasource db {
   provider   = "postgresql"
@@ -224,6 +212,7 @@ model Service {
   groupId              String?
   group                Group?              @relation(fields: [groupId], references: [id], onUpdate: Cascade, onDelete: SetNull)
   importance           Int                 @default(0)
+  hidden               Boolean             @default(false)
 
   @@unique([schoolId, studentAssociationId, groupId, url])
   @@unique([schoolId, studentAssociationId, groupId, name])
@@ -461,11 +450,12 @@ model Group {
   services               Service[]
   restrictedFormSections FormSection[]      @relation("restrictedTo")
 
-  notifications          Notification[]
-  groupId                String?
-  ticketGroupId          String?
-  joinedByBookingTickets Ticket[]       @relation("autojoin")
-  themes                 Theme[]
+  notifications           Notification[]
+  groupId                 String?
+  ticketGroupId           String?
+  joinedByBookingTickets  Ticket[]       @relation("autojoin")
+  themes                  Theme[]
+  defaultApplicableOffers Promotion[]    @relation("defaultApplicableOffers")
 
   // For ldap
   ldapGidNumber Int @unique @default(autoincrement())
@@ -480,7 +470,7 @@ model Group {
   @@index([search], type: Gin)
 }
 
-/// The intermediate model between users and groups
+/// The intermediate model between users
 model GroupMember {
   groupId         String
   memberId        String
@@ -647,7 +637,7 @@ model Ticket {
   openToPromotions   Int[]    @default([])
   openToAlumni       Boolean? @default(false) // false means only non-alumni, true means only alumni, null means both
   openToExternal     Boolean? @default(false) // same thing
-  openToContributors Boolean? @default(false) // same thing
+  openToContributors Boolean? // same thing
   openToApprentices  Boolean? // same thing
   openToSchools      School[]
   openToMajors       Major[]
@@ -745,6 +735,7 @@ model LydiaTransaction {
   phoneNumber                      String        @default("") @db.VarChar(255)
   registrationId                   String?       @unique
   registration                     Registration? @relation(fields: [registrationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  shopPaymentId                    String?       @unique
   requestId                        String?
   requestUuid                      String?
   transactionId                    String?
@@ -976,22 +967,17 @@ model PromotionCode {
 }
 
 model Promotion {
-  id         String          @id @default(dbgenerated("nanoid('promo:')"))
-  createdAt  DateTime        @default(now())
-  updatedAt  DateTime        @updatedAt
-  validUntil DateTime?
-  type       PromotionType
-  codes      PromotionCode[]
-  validOn    Ticket[]
+  id               String          @id @default(dbgenerated("nanoid('promo:')"))
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  validUntil       DateTime?
+  type             PromotionType
+  codes            PromotionCode[]
+  validOn          Ticket[]
+  validByDefaultOn Group[]         @relation("defaultApplicableOffers")
 
   priceOverride Int
   events        Event[]
-}
-
-model Picture {
-  id        String     @id @default(dbgenerated("nanoid('picfile:')"))
-  path      String     @db.VarChar(255)
-  position  Int        @default(0)
 }
 
 model Form {
@@ -1160,8 +1146,8 @@ model Theme {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   visibility Visibility   @default(Private)
-  startsAt   DateTime?    @default(now())
-  endsAt     DateTime?
+  startsAt   DateTime     @default(now())
+  endsAt     DateTime
   author     Group?       @relation(fields: [authorId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   authorId   String?
 

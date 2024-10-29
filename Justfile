@@ -7,6 +7,7 @@ dev:
 	go run server/*.go
 
 build:
+	just genprisma
 	go mod tidy
 	go build -v -ldflags="-X main.Version={{current_version}}" -o bin/server server/*.go
 
@@ -16,6 +17,15 @@ install:
 
 updateschema:
 	curl -fsSL https://git.inpt.fr/churros/churros/-/raw/main/packages/db/prisma/schema.prisma -o schema.prisma
+	sed -i '/^generator .* {/,/^}/d' schema.prisma
+	sed -i '1i\
+	generator goprisma {\n\
+	provider        = "go run github.com/steebchen/prisma-client-go"\n\
+	previewFeatures = ["fullTextSearch", "postgresqlExtensions"]\n\
+	}\
+	' schema.prisma
+	go run github.com/steebchen/prisma-client-go format
+
 
 genprisma:
     go get github.com/steebchen/prisma-client-go 
