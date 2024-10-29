@@ -11,8 +11,11 @@ import (
 )
 
 func main() {
-	// Generate the JSON schema
-	schema := jsonschema.Reflect(&notella.Message{})
+	reflector := new(jsonschema.Reflector)
+	if err := reflector.AddGoComments("git.inpt.fr/churros/notella", "./"); err != nil {
+		fmt.Printf("Error adding Go comments: %v\n", err)
+	}
+	schema := reflector.Reflect(&notella.Message{})
 	schemaJSON, err := json.Marshal(schema)
 	if err != nil {
 		fmt.Printf("Error generating schema: %v\n", err)
