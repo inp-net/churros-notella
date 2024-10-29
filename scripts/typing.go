@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
 
 	"git.inpt.fr/churros/notella"
@@ -80,5 +81,8 @@ func main() {
 	}
 
 	// Print or save the TypeScript output
-	fmt.Println(string(output))
+	os.WriteFile("types.d.ts", output, 0644)
+
+	// Also save useful constants
+	os.WriteFile("constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = %q; export const SUBJECT_NAME = %q;", notella.StreamName, notella.SubjectName)), 0644)
 }

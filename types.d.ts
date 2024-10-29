@@ -54,4 +54,3 @@ export enum Event {
     NewPost = "new_post",
     NewTicket = "new_ticket",
 }
-

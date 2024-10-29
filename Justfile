@@ -32,7 +32,7 @@ genprisma:
     go run github.com/steebchen/prisma-client-go generate
 
 gen_typescript:
-	go run scripts/typing.go > types.d.ts
+	go run scripts/typing.go 
 
 generate:
 	just updateschema

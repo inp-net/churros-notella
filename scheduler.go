@@ -2,8 +2,9 @@ package notella
 
 import (
 	ll "github.com/ewen-lbh/label-logger-go"
-	"github.com/orcaman/concurrent-map/v2"
+	cmap "github.com/orcaman/concurrent-map/v2"
 )
+
 
 var schedules = cmap.New[ScheduledJob]()
 

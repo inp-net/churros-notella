@@ -28,9 +28,6 @@ type Configuration struct {
 
 var Version = "DEV"
 
-const StreamName = "notella:stream"
-const SubjectName = "notella:notification"
-
 func main() {
 	figure.NewColorFigure("Notella", "", "yellow", true).Print()
 	fmt.Printf("%38s\n", fmt.Sprintf("美味しそう〜 v%s", Version))
@@ -74,11 +71,11 @@ func main() {
 		return
 	}
 
-	ll.Log("Initializing", "cyan", "a Jetstream stream [bold]%s[reset], listening for subject [bold]%s[reset]", StreamName, SubjectName)
+	ll.Log("Initializing", "cyan", "a Jetstream stream [bold]%s[reset], listening for subject [bold]%s[reset]", notella.StreamName, notella.SubjectName)
 
 	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     StreamName,
-		Subjects: []string{SubjectName},
+		Name:     notella.StreamName,
+		Subjects: []string{notella.SubjectName},
 	})
 	if err != nil {
 		ll.ErrorDisplay("could not create stream", err)
@@ -87,7 +84,7 @@ func main() {
 
 	ll.Log("Initializing", "cyan", "Jetstream consumer [bold]NotellaConsumer[reset] with [bold]AckExplicitPolicy[reset]")
 
-	_, err = js.AddConsumer(StreamName, &nats.ConsumerConfig{
+	_, err = js.AddConsumer(notella.StreamName, &nats.ConsumerConfig{
 		Durable:   "NotellaConsumer",
 		AckPolicy: nats.AckExplicitPolicy,
 	})
@@ -98,7 +95,7 @@ func main() {
 
 	ll.Log("Starting", "cyan", "consumer [bold]NotellaConsumer[reset]")
 
-	sub, err := js.PullSubscribe(SubjectName, "NotellaConsumer")
+	sub, err := js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
 	if err != nil {
 		ll.ErrorDisplay("could not start consumer", err)
 		return

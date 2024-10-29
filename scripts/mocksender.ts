@@ -1,5 +1,6 @@
 import { connect, StringCodec, JetStreamManager, NatsConnection } from "nats"
-import { Message } from "../types"
+import { Message } from "../types.js"
+import { STREAM_NAME, SUBJECT_NAME } from "../constants.js"
 
 async function setupStream(
   jetStreamManager: JetStreamManager,
@@ -57,9 +58,6 @@ async function publishMessages(
 }
 
 async function main() {
-  const streamName = "notella:stream"
-  const subject = "notella:notification"
-
   // Connect to the NATS server
   const nc = await connect({ servers: "localhost:4222" })
   console.log("Connected to NATS")
@@ -68,12 +66,12 @@ async function main() {
   const jsm = await nc.jetstreamManager()
 
   // Ensure the stream exists
-  await setupStream(jsm, streamName, subject)
+  await setupStream(jsm, STREAM_NAME, SUBJECT_NAME)
 
   // Publish messages at intervals
   const messageCount = 1000
   const delayMs = 10 // 1 second delay between messages
-  await publishMessages(nc, subject, messageCount, delayMs)
+  await publishMessages(nc, SUBJECT_NAME, messageCount, delayMs)
 
   console.log("Finished sending messages.")
   await nc.close()
