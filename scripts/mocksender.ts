@@ -1,3 +1,5 @@
+//@ts-nocheck
+
 import { connect, JetStreamManager, NatsConnection, StringCodec } from 'nats';
 import { STREAM_NAME, SUBJECT_NAME } from '../constants.js';
 import { Message } from '../types.js';
