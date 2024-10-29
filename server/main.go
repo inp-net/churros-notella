@@ -5,7 +5,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -114,7 +113,7 @@ func main() {
 		sigChan := make(chan os.Signal, 1)
 		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 		<-sigChan
-		log.Println("Received shutdown signal, shutting down...")
+		ll.Log("Shuting down", "magenta", "because of signal received")
 		cancel()
 	}()
 
@@ -128,15 +127,13 @@ func main() {
 				// Fetch messages in batches
 				msgs, err := sub.Fetch(10, nats.MaxWait(5*time.Second))
 				if err != nil && err != nats.ErrTimeout {
-					log.Printf("Error fetching messages: %v", err)
+					ll.ErrorDisplay("Could not fetch messages", err)
 					time.Sleep(2 * time.Second) // Wait before retrying
 					continue
 				}
 
 				// Process each message
 				for _, msg := range msgs {
-					log.Printf("Processing message: %s", string(msg.Data))
-					// Simulate notification scheduling
 					notella.NatsReceiver(msg)
 					msg.Ack() // Acknowledge the message
 				}
@@ -146,5 +143,5 @@ func main() {
 
 	// Block until the context is canceled (i.e., server shutdown signal received)
 	<-ctx.Done()
-	log.Println("Server stopped.")
+	ll.Log("Stopped", "red", "server")
 }

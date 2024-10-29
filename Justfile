@@ -31,6 +31,9 @@ genprisma:
     go get github.com/steebchen/prisma-client-go 
     go run github.com/steebchen/prisma-client-go generate
 
+gen_typescript:
+	go run scripts/typing.go > types.d.ts
+
 generate:
 	just updateschema
-	just updateopenapi
+	just gen_typescript

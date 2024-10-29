@@ -1,4 +1,5 @@
 import { connect, StringCodec, JetStreamManager, NatsConnection } from "nats"
+import { Message } from "../types"
 
 async function setupStream(
   jetStreamManager: JetStreamManager,
@@ -17,6 +18,27 @@ async function setupStream(
   }
 }
 
+enum Event {
+  CommentReply = "comment_reply",
+  GodchildRequest = "godchild_request",
+  NewComment = "new_comment",
+  NewPost = "new_post",
+  NewTicket = "new_ticket",
+}
+
+function randomMessage(): Message {
+  const events = [
+    Event.CommentReply,
+    Event.GodchildRequest,
+    Event.NewComment,
+    Event.NewPost,
+    Event.NewTicket,
+  ] as const
+  const event = events[Math.floor(Math.random() * events.length)]
+  const id = Math.random().toString(36).substring(7)
+  return { event, id }
+}
+
 async function publishMessages(
   nc: NatsConnection,
   subject: string,
@@ -28,7 +50,7 @@ async function publishMessages(
 
   for (let i = 1; i <= messageCount; i++) {
     const message = `Mock Order #${i}`
-    await js.publish(subject, sc.encode(message))
+    await js.publish(subject, sc.encode(JSON.stringify(randomMessage())))
     console.log(`Sent message: ${message}`)
     await new Promise((resolve) => setTimeout(resolve, delayMs))
   }
@@ -49,8 +71,8 @@ async function main() {
   await setupStream(jsm, streamName, subject)
 
   // Publish messages at intervals
-  const messageCount = 20
-  const delayMs = 1000 // 1 second delay between messages
+  const messageCount = 1000
+  const delayMs = 10 // 1 second delay between messages
   await publishMessages(nc, subject, messageCount, delayMs)
 
   console.log("Finished sending messages.")
