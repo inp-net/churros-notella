@@ -58,6 +58,12 @@ func main() {
 	ll.Info("starting scheduler")
 	go notella.StartScheduler()
 
+	ll.Log("Connecting", "cyan", "to Churros database at [bold]%s[reset]", config.ChurrosDatabaseURL)
+	err = notella.ConnectToDababase()
+	if err != nil {
+		ll.ErrorDisplay("could not connect to database", err)
+	}
+
 	ll.Log("Connecting", "cyan", "to NATS server at [bold]%s[reset]", nats.DefaultURL)
 	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
@@ -131,7 +137,10 @@ func main() {
 
 				// Process each message
 				for _, msg := range msgs {
-					notella.NatsReceiver(msg)
+					err = notella.NatsReceiver(msg)
+					if err != nil {
+						ll.ErrorDisplay("Could not process message", err)
+					}
 					msg.Ack() // Acknowledge the message
 				}
 			}

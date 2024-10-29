@@ -1,6 +1,7 @@
 package notella
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -43,4 +44,21 @@ func (id *ChurrosId) UnmarshalText(text []byte) error {
 	id.LocalID = parsed.LocalID
 
 	return nil
+}
+
+func CreateInDatabaseNotification(notification Message, endpoint string) error {
+	_, err := prisma.Notification.CreateOne(
+		db.Notification.Subscription.Link(
+			db.NotificationSubscription.Endpoint.Equals(endpoint),
+		),
+		db.Notification.Title.Set(notification.Title),
+		db.Notification.Body.Set(notification.Body),
+		db.Notification.ID.Set(notification.Id),
+	).Exec(context.Background())
+
+	return err
+}
+
+func ConnectToDababase() error {
+	return prisma.Connect()
 }

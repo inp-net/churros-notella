@@ -84,5 +84,5 @@ func main() {
 	os.WriteFile("types.d.ts", output, 0644)
 
 	// Also save useful constants
-	os.WriteFile("constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = %q; export const SUBJECT_NAME = %q;", notella.StreamName, notella.SubjectName)), 0644)
+	os.WriteFile("constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = '%s';\nexport const SUBJECT_NAME = '%s';\n", notella.StreamName, notella.SubjectName)), 0644)
 }

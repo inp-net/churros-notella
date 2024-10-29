@@ -5,7 +5,6 @@ import (
 	cmap "github.com/orcaman/concurrent-map/v2"
 )
 
-
 var schedules = cmap.New[ScheduledJob]()
 
 func (job ScheduledJob) Unschedule() {
