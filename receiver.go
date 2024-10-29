@@ -1,9 +1,10 @@
 package notella
 
 import (
-	"github.com/nats-io/nats.go/jetstream"
+	ll "github.com/ewen-lbh/label-logger-go"
+	"github.com/nats-io/nats.go"
 )
 
-func NatsReceiver(m jetstream.Msg) {
-
+func NatsReceiver(m *nats.Msg) {
+	ll.Log("Received", "cyan", "message: %s", string(m.Data))
 }

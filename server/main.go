@@ -5,6 +5,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,7 +17,6 @@ import (
 	ll "github.com/ewen-lbh/label-logger-go"
 	"github.com/joho/godotenv"
 	"github.com/nats-io/nats.go"
-	"github.com/nats-io/nats.go/jetstream"
 )
 
 type Configuration struct {
@@ -28,6 +28,9 @@ type Configuration struct {
 }
 
 var Version = "DEV"
+
+const StreamName = "notella:stream"
+const SubjectName = "notella:notification"
 
 func main() {
 	figure.NewColorFigure("Notella", "", "yellow", true).Print()
@@ -66,20 +69,17 @@ func main() {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Second)
-	defer cancel()
-
-	js, err := jetstream.New(nc)
+	js, err := nc.JetStream()
 	if err != nil {
 		ll.ErrorDisplay("could not connect to Jetstream", err)
 		return
 	}
 
-	ll.Log("Initializing", "cyan", "a Jetstream stream [bold]notella:stream[reset], listening for [bold]notella:*[reset] subjects")
+	ll.Log("Initializing", "cyan", "a Jetstream stream [bold]%s[reset], listening for subject [bold]%s[reset]", StreamName, SubjectName)
 
-	s, err := js.CreateStream(ctx, jetstream.StreamConfig{
-		Name:     "notella:stream",
-		Subjects: []string{"notella:*"},
+	_, err = js.AddStream(&nats.StreamConfig{
+		Name:     StreamName,
+		Subjects: []string{SubjectName},
 	})
 	if err != nil {
 		ll.ErrorDisplay("could not create stream", err)
@@ -88,9 +88,9 @@ func main() {
 
 	ll.Log("Initializing", "cyan", "Jetstream consumer [bold]NotellaConsumer[reset] with [bold]AckExplicitPolicy[reset]")
 
-	cons, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig{
+	_, err = js.AddConsumer(StreamName, &nats.ConsumerConfig{
 		Durable:   "NotellaConsumer",
-		AckPolicy: jetstream.AckExplicitPolicy,
+		AckPolicy: nats.AckExplicitPolicy,
 	})
 	if err != nil {
 		ll.ErrorDisplay("could not create consumer", err)
@@ -99,19 +99,52 @@ func main() {
 
 	ll.Log("Starting", "cyan", "consumer [bold]NotellaConsumer[reset]")
 
-	cc, err := cons.Consume(func(msg jetstream.Msg) {
-		fmt.Println(string(msg.Data()))
-		msg.Ack()
-	}, jetstream.ConsumeErrHandler(func(consumeCtx jetstream.ConsumeContext, err error) {
-		fmt.Println(err)
-	}))
+	sub, err := js.PullSubscribe(SubjectName, "NotellaConsumer")
 	if err != nil {
 		ll.ErrorDisplay("could not start consumer", err)
 		return
 	}
-	defer cc.Stop()
 
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-	<-sig
+	// Setup a context to handle graceful shutdowns
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Capture OS signals for graceful shutdown
+	go func() {
+		sigChan := make(chan os.Signal, 1)
+		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+		<-sigChan
+		log.Println("Received shutdown signal, shutting down...")
+		cancel()
+	}()
+
+	// Continuously fetch and process messages
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				// Fetch messages in batches
+				msgs, err := sub.Fetch(10, nats.MaxWait(5*time.Second))
+				if err != nil && err != nats.ErrTimeout {
+					log.Printf("Error fetching messages: %v", err)
+					time.Sleep(2 * time.Second) // Wait before retrying
+					continue
+				}
+
+				// Process each message
+				for _, msg := range msgs {
+					log.Printf("Processing message: %s", string(msg.Data))
+					// Simulate notification scheduling
+					notella.NatsReceiver(msg)
+					msg.Ack() // Acknowledge the message
+				}
+			}
+		}
+	}()
+
+	// Block until the context is canceled (i.e., server shutdown signal received)
+	<-ctx.Done()
+	log.Println("Server stopped.")
 }
