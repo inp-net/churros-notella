@@ -8,6 +8,7 @@ Notification queue server for [Churros](https://git.inpt.fr/churros/churros)
 # generate prisma client
 just genprisma
 # start
-just 
+just
 ```
+
 ![](./principle.svg)
