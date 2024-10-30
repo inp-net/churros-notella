@@ -37,3 +37,10 @@ gen_typescript:
 generate:
 	just updateschema
 	just gen_typescript
+
+release_typescript:
+	npm version minor
+	just gen_typescript
+	git add *.ts package.json
+	git commit -m "chore: update typescript types"
+	npm publish --access=public
