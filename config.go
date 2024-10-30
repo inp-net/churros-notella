@@ -7,11 +7,13 @@ import (
 )
 
 type Configuration struct {
-	Port               int    `env:"PORT" envDefault:"8080"`
-	ChurrosDatabaseURL string `env:"DATABASE_URL"`
-	VapidPublicKey     string `env:"PUBLIC_VAPID_KEY"`
-	VapidPrivateKey    string `env:"VAPID_PRIVATE_KEY"`
-	ContactEmail       string `env:"CONTACT_EMAIL"`
+	Port                   int    `env:"PORT" envDefault:"8080"`
+	ChurrosDatabaseURL     string `env:"DATABASE_URL"`
+	VapidPublicKey         string `env:"PUBLIC_VAPID_KEY"`
+	VapidPrivateKey        string `env:"VAPID_PRIVATE_KEY"`
+	ContactEmail           string `env:"CONTACT_EMAIL"`
+	FirebaseServiceAccount string `env:"FIREBASE_SERVICE_ACCOUNT"`
+	AppPackageId           string `env:"APP_PACKAGE_ID" envDefault:"app.churrros"`
 }
 
 func LoadConfiguration() (Configuration, error) {

@@ -38,10 +38,16 @@ func main() {
 	ll.Log("", "reset", "port:            [bold]%d[reset]", config.Port)
 	ll.Log("", "reset", "contact email:   [bold]%s[reset]", config.ContactEmail)
 	ll.Log("", "reset", "Churros DB URL:  [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
+	ll.Log("", "reset", "App Package ID:  [bold]%s[reset]", config.AppPackageId)
 	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
 		ll.Log("", "reset", "VAPID keys:      [bold][green]set[reset]")
 	} else {
 		ll.Log("", "reset", "VAPID keys:      [bold][red]not set[reset]")
+	}
+	if config.HasValidFirebaseServiceAccount() {
+		ll.Log("", "reset", "Firebase:        [bold][green]configured[reset]")
+	} else {
+		ll.Log("", "reset", "Firebase:        [bold][red]unconfigured[reset]")
 	}
 	fmt.Println()
 

@@ -25,13 +25,14 @@ func StartScheduler() {
 	for {
 		for _, job := range schedules.Items() {
 			if job.ShouldRun() {
-				ll.Log("Running", "cyan", "job for %s on %s", job.Event, job.ChurrosObjectId)
+				ll.Log("Running", "cyan", "[dim]%s[reset] job for %s on %s", job.Id, job.Event, job.ChurrosObjectId)
 				job.Unschedule()
 				go func() {
 					err := job.Run()
 					if err != nil {
 						ll.ErrorDisplay("could not run job %s", err, job.Id)
 					}
+					ll.Log("Ran", "green", "[dim]%s[reset] job for %s on %s", job.Id, job.Event, job.ChurrosObjectId)
 				}()
 			}
 		}

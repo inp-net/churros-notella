@@ -1,7 +1,9 @@
 package notella
 
 import (
+	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 
 	ll "github.com/ewen-lbh/label-logger-go"
@@ -34,20 +36,37 @@ func (msg Message) Run() error {
 
 	ll.Log("Sending", "green", "notification for %s on %s to %d users (%d subscriptions)", msg.Event, msg.ChurrosObjectId, len(users), len(subs))
 
+	var wg sync.WaitGroup
+
+	wg.Add(len(subs))
+
 	// Parallelize sending the notifications
 	for _, sub := range subs {
 		ll.Debug("sending notification to %#v", sub)
-		go func(sub Subscription) {
+		go func(wg *sync.WaitGroup, sub Subscription) {
 			if sub.IsWebpush() {
 				err := msg.SendWebPush(group, sub)
 				if err != nil {
 					ll.ErrorDisplay("could not send webpush notification", err)
 				}
 			} else {
-				ll.Warn("subscription for %s is not webpush, ignoring", sub.Owner.Uid)
+				err := msg.SendToFirebase(group, sub)
+				if err != nil {
+					ll.ErrorDisplay("could not send firebase notification", err)
+				}
 			}
-		}(sub)
+			wg.Done()
+		}(&wg, sub)
 	}
 
+	wg.Wait()
 	return nil
+}
+
+func (msg Message) JSONString() string {
+	out, err := json.Marshal(msg)
+	if err != nil {
+		return ""
+	}
+	return string(out)
 }

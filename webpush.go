@@ -3,6 +3,7 @@ package notella
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"git.inpt.fr/churros/notella/db"
 	"github.com/SherClockHolmes/webpush-go"
@@ -88,5 +89,6 @@ func (msg Message) SendWebPush(groupId string, sub Subscription) error {
 }
 
 func (sub Subscription) IsWebpush() bool {
-	return sub.Webpush.Endpoint != ""
+	// Native subscriptions don't use the https: protocol
+	return strings.HasPrefix(sub.Webpush.Endpoint, "https://")
 }
