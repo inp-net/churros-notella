@@ -35,7 +35,7 @@ type Message struct {
 		Label string `json:"label"`
 		// URL to go to when the action button is clicked
 		Action string `json:"action"`
-	} `json:"actions"`
+	} `json:"actions,omitempty"`
 	// URL to an image to display in the notification
-	Image string `json:"image"`
+	Image string `json:"image,omitempty"`
 }
