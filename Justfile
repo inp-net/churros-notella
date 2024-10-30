@@ -44,3 +44,5 @@ release_typescript:
 	git commit -m "chore: update typescript types"
 	npm version minor
 	npm publish --access=public
+	git push 
+	git push --tags
