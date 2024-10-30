@@ -48,9 +48,17 @@ export interface Action {
  * Type of event that triggered the notification
  */
 export enum Event {
+    BookingPaid = "booking_paid",
     CommentReply = "comment_reply",
+    ContributionPaid = "contribution_paid",
+    Custom = "custom",
+    GodchildAccepted = "godchild_accepted",
+    GodchildRejected = "godchild_rejected",
     GodchildRequest = "godchild_request",
+    LoginStuck = "login_stuck",
     NewComment = "new_comment",
     NewPost = "new_post",
     NewTicket = "new_ticket",
+    PendingSignup = "pending_signup",
+    Test = "test",
 }
