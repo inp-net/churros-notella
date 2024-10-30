@@ -60,5 +60,7 @@ export enum Event {
     NewPost = "new_post",
     NewTicket = "new_ticket",
     PendingSignup = "pending_signup",
+    ShotgunClosesSoon = "shotgun_closes_soon",
+    ShotgunOpensSoon = "shotgun_opens_soon",
     Test = "test",
 }
