@@ -92,7 +92,12 @@ func (msg Message) Channel() db.NotificationChannel {
 	case EventNewComment:
 		return db.NotificationChannelComments
 	case EventGodchildRequest:
+	case EventGodchildAccepted:
+	case EventGodchildRejected:
 		return db.NotificationChannelGodparentRequests
+	case EventShotgunClosesSoon:
+	case EventShotgunOpensSoon:
+		return db.NotificationChannelShotguns
 	}
 
 	return db.NotificationChannelOther
