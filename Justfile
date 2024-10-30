@@ -39,8 +39,8 @@ generate:
 	just gen_typescript
 
 release_typescript:
+	just gen_typescript
 	git add *.ts 
 	git commit -m "chore: update typescript types"
 	npm version minor
-	just gen_typescript
 	npm publish --access=public
