@@ -62,3 +62,38 @@ func CreateInDatabaseNotification(notification Message, endpoint string) error {
 func ConnectToDababase() error {
 	return prisma.Connect()
 }
+
+// Group returns the Churros group ID responsible for the notification
+func (msg Message) Group() (string, error) {
+	switch msg.Event {
+	case EventNewPost:
+		post, err := prisma.Article.FindUnique(
+			db.Article.ID.Equals(msg.ChurrosObjectId),
+		).Select(
+			db.Article.GroupID.Field(),
+		).Exec(context.Background())
+		if err != nil {
+			return "", fmt.Errorf("while getting the group responsible for the notification: %w", err)
+		}
+
+		return post.GroupID, nil
+	}
+
+	return "", fmt.Errorf("unknown event type %q", msg.Event)
+}
+
+func (msg Message) Channel() db.NotificationChannel {
+	switch msg.Event {
+	case EventNewPost:
+		return db.NotificationChannelArticles
+	case EventNewTicket:
+		return db.NotificationChannelShotguns
+	case EventCommentReply:
+	case EventNewComment:
+		return db.NotificationChannelComments
+	case EventGodchildRequest:
+		return db.NotificationChannelGodparentRequests
+	}
+
+	return db.NotificationChannelOther
+}

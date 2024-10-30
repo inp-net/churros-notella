@@ -5,18 +5,19 @@ import (
 	cmap "github.com/orcaman/concurrent-map/v2"
 )
 
-var schedules = cmap.New[ScheduledJob]()
+var schedules = cmap.New[Message]()
 
-func (job ScheduledJob) Unschedule() {
-	schedules.Remove(job.ID)
+func (job Message) Unschedule() {
+	schedules.Remove(job.Id)
 }
 
-func (job ScheduledJob) Schedule() {
-	schedules.Set(job.ID, job)
+func (job Message) Schedule() {
+	ll.Log("Scheduling", "magenta", "%s for %s", job.Id, job.SendAt)
+	schedules.Set(job.Id, job)
 }
 
-func (job ScheduledJob) IsScheduled() bool {
-	return schedules.Has(job.ID)
+func (job Message) IsScheduled() bool {
+	return schedules.Has(job.Id)
 }
 
 // StartScheduler starts the scheduler loop, which runs forever
@@ -24,9 +25,14 @@ func StartScheduler() {
 	for {
 		for _, job := range schedules.Items() {
 			if job.ShouldRun() {
-				ll.Log("Running", "cyan", "job for %s on %s", job.Event, job.Object)
+				ll.Log("Running", "cyan", "job for %s on %s", job.Event, job.ChurrosObjectId)
 				job.Unschedule()
-				go job.Run()
+				go func() {
+					err := job.Run()
+					if err != nil {
+						ll.ErrorDisplay("could not run job %s", err, job.Id)
+					}
+				}()
 			}
 		}
 	}

@@ -10,7 +10,9 @@ import (
 // AllUsers returns all the users in the database that have at least one notification subscription
 func AllUsers() ([]string, error) {
 	users, err := prisma.User.FindMany(
-		db.User.NotificationSubscriptions.Some(),
+		db.User.NotificationSubscriptions.Some(
+			db.NotificationSubscription.Endpoint.Not(""),
+		),
 	).Select(
 		db.User.ID.Field(),
 	).Exec(context.Background())

@@ -11,20 +11,11 @@ import (
 	"time"
 
 	"git.inpt.fr/churros/notella"
-	"github.com/caarlos0/env/v11"
 	"github.com/common-nighthawk/go-figure"
 	ll "github.com/ewen-lbh/label-logger-go"
 	"github.com/joho/godotenv"
 	"github.com/nats-io/nats.go"
 )
-
-type Configuration struct {
-	Port               int    `env:"PORT" envDefault:"8080"`
-	ChurrosApiUrl      string `env:"CHURROS_API_URL" envDefault:"http://localhost:4000/graphql"`
-	PollInterval       int    `env:"POLL_INTERVAL_MS" envDefault:"500"`
-	RedisURL           string `env:"REDIS_URL" envDefault:"redis://localhost:6379"`
-	ChurrosDatabaseURL string `env:"DATABASE_URL"`
-}
 
 var Version = "DEV"
 
@@ -41,25 +32,27 @@ func main() {
 		ll.Info("loaded .env file")
 	}
 
-	config := Configuration{}
-	err := env.Parse(&config)
-	if err != nil {
-		ll.ErrorDisplay("could not load env variables", err)
-	}
+	config, _ := notella.LoadConfiguration()
 
 	ll.Info("Running with config ")
 	ll.Log("", "reset", "port:            [bold]%d[reset]", config.Port)
+	ll.Log("", "reset", "contact email:   [bold]%s[reset]", config.ContactEmail)
 	ll.Log("", "reset", "Churros API URL: [bold]%s[reset]", redactURL(config.ChurrosApiUrl))
 	ll.Log("", "reset", "Churros DB URL:  [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
 	ll.Log("", "reset", "Redis URL:       [bold]%s[reset]", redactURL(config.RedisURL))
 	ll.Log("", "reset", "Poll interval:   [bold]%d[reset] ms", config.PollInterval)
+	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
+		ll.Log("", "reset", "VAPID keys:      [bold][green]set[reset]")
+	} else {
+		ll.Log("", "reset", "VAPID keys:      [bold][red]not set[reset]")
+	}
 	fmt.Println()
 
 	ll.Info("starting scheduler")
 	go notella.StartScheduler()
 
 	ll.Log("Connecting", "cyan", "to Churros database at [bold]%s[reset]", config.ChurrosDatabaseURL)
-	err = notella.ConnectToDababase()
+	err := notella.ConnectToDababase()
 	if err != nil {
 		ll.ErrorDisplay("could not connect to database", err)
 	}

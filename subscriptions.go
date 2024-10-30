@@ -20,13 +20,13 @@ type Subscription struct {
 	Owner   SubscriptionOwner    `json:"owner"`
 }
 
-var subscriptions []Subscription
-
-func notificationSubscriptionsFromDatabase() (subscriptions []Subscription, err error) {
+func subscriptionsOfUsers(ids []string) (subscriptions []Subscription, err error) {
 	if err := prisma.Prisma.Connect(); err != nil {
 		return nil, fmt.Errorf("could not connect to prisma: %w", err)
 	}
-	subs, err := prisma.NotificationSubscription.FindMany().With(db.NotificationSubscription.Owner.Fetch()).Exec(context.Background())
+	subs, err := prisma.NotificationSubscription.FindMany(
+		db.NotificationSubscription.OwnerID.In(ids),
+	).With(db.NotificationSubscription.Owner.Fetch()).Exec(context.Background())
 
 	if err != nil {
 		return subscriptions, fmt.Errorf("while getting notification subscriptions from database: %w", err)
