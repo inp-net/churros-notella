@@ -1,4 +1,28 @@
 {
+  "name": "@inp-net/notella",
+  "author": {
+    "email": "contact@net7.dev",
+    "name": "Churros DevTeam",
+    "url": "https://churros.inpt.fr/credits/"
+  },
+  "contributors": [
+    {
+      "name": "ewen-lbh",
+      "email": "hey@ewen.works",
+      "url": "https://ewen.works"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://git.inpt.fr/churros/notella"
+  },
+  "homepage": "https://git.inpt.fr/churros/notella",
+  "bugs": {
+    "url": "https://git.inpt.fr/churros/notella/-/issues"
+  },
+  "license": "AGPL-3.0",
+  "version": "0.1.2",
+  "description": "Types and constants for Notella, Churros' notification scheduler",
   "type": "module",
   "devDependencies": {
     "nats": "^2.28.2",
@@ -8,5 +32,17 @@
   },
   "dependencies": {
     "@prisma/client": "^5.20.0"
+  },
+  "files": [
+    "README.md",
+    "constants.ts",
+    "types.d.ts",
+    "index.ts"
+  ],
+  "exports": {
+    ".": {
+      "default": "./index.ts",
+      "types": "./index.ts"
+    }
   }
 }

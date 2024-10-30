@@ -81,7 +81,7 @@ func main() {
 	}
 
 	// Print or save the TypeScript output
-	os.WriteFile("types.d.ts", output, 0644)
+	os.WriteFile("types.ts", output, 0644)
 
 	// Also save useful constants
 	os.WriteFile("constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = '%s';\nexport const SUBJECT_NAME = '%s';\n", notella.StreamName, notella.SubjectName)), 0644)

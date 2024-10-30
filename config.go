@@ -8,9 +8,6 @@ import (
 
 type Configuration struct {
 	Port               int    `env:"PORT" envDefault:"8080"`
-	ChurrosApiUrl      string `env:"CHURROS_API_URL" envDefault:"http://localhost:4000/graphql"`
-	PollInterval       int    `env:"POLL_INTERVAL_MS" envDefault:"500"`
-	RedisURL           string `env:"REDIS_URL" envDefault:"redis://localhost:6379"`
 	ChurrosDatabaseURL string `env:"DATABASE_URL"`
 	VapidPublicKey     string `env:"PUBLIC_VAPID_KEY"`
 	VapidPrivateKey    string `env:"VAPID_PRIVATE_KEY"`

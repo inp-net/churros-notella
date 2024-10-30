@@ -37,10 +37,7 @@ func main() {
 	ll.Info("Running with config ")
 	ll.Log("", "reset", "port:            [bold]%d[reset]", config.Port)
 	ll.Log("", "reset", "contact email:   [bold]%s[reset]", config.ContactEmail)
-	ll.Log("", "reset", "Churros API URL: [bold]%s[reset]", redactURL(config.ChurrosApiUrl))
 	ll.Log("", "reset", "Churros DB URL:  [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
-	ll.Log("", "reset", "Redis URL:       [bold]%s[reset]", redactURL(config.RedisURL))
-	ll.Log("", "reset", "Poll interval:   [bold]%d[reset] ms", config.PollInterval)
 	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
 		ll.Log("", "reset", "VAPID keys:      [bold][green]set[reset]")
 	} else {
