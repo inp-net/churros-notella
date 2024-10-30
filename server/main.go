@@ -13,7 +13,6 @@ import (
 	"git.inpt.fr/churros/notella"
 	"github.com/common-nighthawk/go-figure"
 	ll "github.com/ewen-lbh/label-logger-go"
-	"github.com/joho/godotenv"
 	"github.com/nats-io/nats.go"
 )
 
@@ -23,14 +22,6 @@ func main() {
 	figure.NewColorFigure("Notella", "", "yellow", true).Print()
 	fmt.Printf("%38s\n", fmt.Sprintf("美味しそう〜 v%s", Version))
 	fmt.Println()
-
-	if _, err := os.Stat(".env"); err == nil {
-		err := godotenv.Load()
-		if err != nil {
-			ll.ErrorDisplay("could not load .env file", err)
-		}
-		ll.Info("loaded .env file")
-	}
 
 	config, _ := notella.LoadConfiguration()
 

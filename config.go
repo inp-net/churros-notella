@@ -2,8 +2,11 @@ package notella
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/caarlos0/env/v11"
+	ll "github.com/ewen-lbh/label-logger-go"
+	"github.com/joho/godotenv"
 )
 
 type Configuration struct {
@@ -17,11 +20,21 @@ type Configuration struct {
 }
 
 func LoadConfiguration() (Configuration, error) {
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			ll.ErrorDisplay("could not load .env file", err)
+		}
+		ll.Info("loaded .env file")
+	}
+
 	config := Configuration{}
 	err := env.Parse(&config)
 	if err != nil {
 		return Configuration{}, fmt.Errorf("could not load env variables: %w", err)
 	}
+
+	ll.Log("Loaded", "green", "configuration from environment")
 
 	return config, nil
 }
