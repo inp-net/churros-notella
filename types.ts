@@ -6,7 +6,7 @@ export interface Message {
     /**
      * Additional action buttons
      */
-    actions: Action[];
+    actions?: Action[];
     /**
      * Notification body
      */
@@ -22,7 +22,7 @@ export interface Message {
     /**
      * URL to an image to display in the notification
      */
-    image: string;
+    image?: string;
     /**
      * Churros ID of the ressource (the ticket, the post, the comment, etc)
      * Used to determine to whom the notification should be sent
