@@ -21,7 +21,7 @@
     "url": "https://git.inpt.fr/churros/notella/-/issues"
   },
   "license": "AGPL-3.0",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Types and constants for Notella, Churros' notification scheduler",
   "type": "module",
   "devDependencies": {
