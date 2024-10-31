@@ -11,6 +11,17 @@ build:
 	go mod tidy
 	go build -v -ldflags="-X main.Version={{current_version}}" -o bin/server server/*.go
 
+docker:
+	docker build -t notella:{{current_version}} .
+	docker tag notella:{{current_version}} notella:latest
+	docker tag notella:{{current_version}} harbor.k8s.inpt.fr/net7/notella:{{current_version}}
+	docker tag notella:{{current_version}} harbor.k8s.inpt.fr/net7/notella:latest
+	docker push notella:{{current_version}}
+	docker push notella:latest
+	docker push harbor.k8s.inpt.fr/net7/notella:{{current_version}}
+	docker push harbor.k8s.inpt.fr/net7/notella:latest
+
+
 install:
 	just build
 	cp bin/server ~/.local/bin/notella
