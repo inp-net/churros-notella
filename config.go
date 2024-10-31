@@ -12,14 +12,14 @@ import (
 )
 
 type Configuration struct {
-	Port                   int    `env:"PORT" envDefault:"8080"`
-	ChurrosDatabaseURL     string `env:"DATABASE_URL"`
-	RedisURL               string `env:"REDIS_URL"`
-	VapidPublicKey         string `env:"PUBLIC_VAPID_KEY"`
-	VapidPrivateKey        string `env:"VAPID_PRIVATE_KEY"`
-	ContactEmail           string `env:"CONTACT_EMAIL"`
-	FirebaseServiceAccount string `env:"FIREBASE_SERVICE_ACCOUNT"`
-	AppPackageId           string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
+	ChurrosDatabaseURL         string `env:"DATABASE_URL"`
+	RedisURL                   string `env:"REDIS_URL"`
+	VapidPublicKey             string `env:"PUBLIC_VAPID_KEY"`
+	VapidPrivateKey            string `env:"VAPID_PRIVATE_KEY"`
+	ContactEmail               string `env:"CONTACT_EMAIL"`
+	FirebaseServiceAccount     string `env:"FIREBASE_SERVICE_ACCOUNT"`
+	StartupScheduleRestoration string `env:"STARTUP_SCHEDULE_RESTORATION" envDefault:"enabled"`
+	AppPackageId               string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
 }
 
 func LoadConfiguration() (Configuration, error) {
@@ -35,6 +35,10 @@ func LoadConfiguration() (Configuration, error) {
 	err := env.Parse(&config)
 	if err != nil {
 		return Configuration{}, fmt.Errorf("could not load env variables: %w", err)
+	}
+
+	if config.StartupScheduleRestoration != "enabled" && config.StartupScheduleRestoration != "disabled" && config.StartupScheduleRestoration != "eager" {
+		return Configuration{}, fmt.Errorf("invalid value for STARTUP_SCHEDULE_RESTORATION: %q, should be one of \"enabled\", \"disabled\", \"eager\"", config.StartupScheduleRestoration)
 	}
 
 	ll.Log("Loaded", "green", "configuration from environment")

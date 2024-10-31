@@ -27,24 +27,26 @@ func main() {
 
 	ll.Info("Server time is %s", time.Now().Format("2006-01-02 15:04:05 -07:00:00"))
 	ll.Info("Running with config ")
-	ll.Log("", "reset", "port:            [bold]%d[reset]", config.Port)
-	ll.Log("", "reset", "contact email:   [bold]%s[reset]", config.ContactEmail)
-	ll.Log("", "reset", "Churros DB URL:  [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
-	ll.Log("", "reset", "Redis URL:       [bold]%s[reset]", redactURL(config.RedisURL))
-	ll.Log("", "reset", "App Package ID:  [bold]%s[reset]", config.AppPackageId)
+	ll.Log("", "reset", "Schedule recovery: [bold][dim]at startup [reset][bold]%s[reset]", config.StartupScheduleRestoration)
+	ll.Log("", "reset", "contact email:     [bold]%s[reset]", config.ContactEmail)
+	ll.Log("", "reset", "Churros DB URL:    [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
+	ll.Log("", "reset", "Redis URL:         [bold]%s[reset]", redactURL(config.RedisURL))
+	ll.Log("", "reset", "App Package ID:    [bold]%s[reset]", config.AppPackageId)
 	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
-		ll.Log("", "reset", "VAPID keys:      [bold][green]set[reset]")
+		ll.Log("", "reset", "VAPID keys:        [bold][green]set[reset]")
 	} else {
-		ll.Log("", "reset", "VAPID keys:      [bold][red]not set[reset]")
+		ll.Log("", "reset", "VAPID keys:        [bold][red]not set[reset]")
 	}
 	if config.HasValidFirebaseServiceAccount() {
-		ll.Log("", "reset", "Firebase:        [bold][green]configured[reset]")
+		ll.Log("", "reset", "Firebase:          [bold][green]configured[reset]")
 	} else {
-		ll.Log("", "reset", "Firebase:        [bold][red]unconfigured[reset]")
+		ll.Log("", "reset", "Firebase:          [bold][red]unconfigured[reset]")
 	}
 	fmt.Println()
 
-	notella.RestoreSchedule()
+	if config.StartupScheduleRestoration != "disabled" {
+		notella.RestoreSchedule(config.StartupScheduleRestoration == "eager")
+	}
 	notella.DisplaySchedule()
 
 	ll.Info("starting scheduler")

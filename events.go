@@ -12,21 +12,23 @@ const (
 	EventShowScheduledJobs   Event = "show_scheduled_jobs"
 	EventSaveSchedule        Event = "save_schedule"
 	EventRestoreSchedule     Event = "restore_schedule"
-	EventClearSchedule       Event = "clear_schedule"
-	EventNewPost             Event = "new_post"
-	EventGodchildRequest     Event = "godchild_request"
-	EventNewComment          Event = "new_comment"
-	EventCommentReply        Event = "comment_reply"
-	EventCustom              Event = "custom"
-	EventTest                Event = "test"
-	EventGodchildAccepted    Event = "godchild_accepted"
-	EventGodchildRejected    Event = "godchild_rejected"
-	EventPendingSignup       Event = "pending_signup"
-	EventLoginStuck          Event = "login_stuck"
-	EventBookingPaid         Event = "booking_paid"
-	EventContributionPaid    Event = "contribution_paid"
-	EventShotgunOpensSoon    Event = "shotgun_opens_soon"
-	EventShotgunClosesSoon   Event = "shotgun_closes_soon"
+	// Like restore_schedule, but also re-schedules events that have send_at in the past
+	EventRestoreScheduleEager Event = "restore_schedule_eager"
+	EventClearSchedule        Event = "clear_schedule"
+	EventNewPost              Event = "new_post"
+	EventGodchildRequest      Event = "godchild_request"
+	EventNewComment           Event = "new_comment"
+	EventCommentReply         Event = "comment_reply"
+	EventCustom               Event = "custom"
+	EventTest                 Event = "test"
+	EventGodchildAccepted     Event = "godchild_accepted"
+	EventGodchildRejected     Event = "godchild_rejected"
+	EventPendingSignup        Event = "pending_signup"
+	EventLoginStuck           Event = "login_stuck"
+	EventBookingPaid          Event = "booking_paid"
+	EventContributionPaid     Event = "contribution_paid"
+	EventShotgunOpensSoon     Event = "shotgun_opens_soon"
+	EventShotgunClosesSoon    Event = "shotgun_closes_soon"
 )
 
 type Message struct {
@@ -35,7 +37,7 @@ type Message struct {
 	// When to push the notification
 	SendAt time.Time `json:"send_at"`
 	// Type of event that triggered the notification
-	Event Event `json:"event" jsonschema:"enum=save_schedule,enum=clear_schedule,enum=clear_stored_schedule,enum=restore_schedule,enum=clear_scheduled_jobs,enum=show_scheduled_jobs,enum=new_post,enum=godchild_request,enum=new_comment,enum=comment_reply,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
+	Event Event `json:"event" jsonschema:"enum=save_schedule,enum=clear_schedule,enum=clear_stored_schedule,enum=restore_schedule,enum=restore_schedule_eager,enum=clear_scheduled_jobs,enum=show_scheduled_jobs,enum=new_post,enum=godchild_request,enum=new_comment,enum=comment_reply,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
 	// Churros ID of the ressource (the ticket, the post, the comment, etc)
 	// Used to determine to whom the notification should be sent
 	// For godchild_request, this is not a user id, but a godparent request id.

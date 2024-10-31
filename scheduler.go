@@ -26,8 +26,13 @@ func (job Message) Unschedule() {
 }
 
 // RestoreSchedule restores the scheduled messages from Redis to memory
-func RestoreSchedule() error {
-	ll.Log("Restoring", "blue", "schedule from Redis")
+func RestoreSchedule(eager bool) error {
+	if eager {
+		ll.Log("Restoring", "blue", "schedule from Redis [red][bold]eagerly[reset]")
+	} else {
+		ll.Log("Restoring", "blue", "schedule from Redis")
+
+	}
 	keys, err := redisClient.Keys(context.Background(), "notella:message:*").Result()
 	if err != nil {
 		return fmt.Errorf("while getting notella:message:* keys from redis: %w", err)
@@ -47,7 +52,7 @@ func RestoreSchedule() error {
 			return fmt.Errorf("while restoring schedule: could not unmarshal value for Redis key %s: %w", key, err)
 		}
 
-		if job.SendAt.Before(time.Now()) {
+		if !eager && job.SendAt.Before(time.Now()) {
 			ll.Warn("skipping restoration of %s because it's in the past: %#v", job.Id, job)
 			continue
 		}
@@ -130,7 +135,13 @@ func StartScheduler() {
 						DisplaySchedule()
 
 					case EventRestoreSchedule:
-						err := RestoreSchedule()
+						err := RestoreSchedule(false)
+						if err != nil {
+							ll.ErrorDisplay("could not restore schedule", err)
+						}
+
+					case EventRestoreScheduleEager:
+						err := RestoreSchedule(true)
 						if err != nil {
 							ll.ErrorDisplay("could not restore schedule", err)
 						}
