@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"strings"
 
 	"git.inpt.fr/churros/notella"
 	"github.com/invopop/jsonschema"
@@ -16,7 +17,26 @@ func main() {
 	if err := reflector.AddGoComments("git.inpt.fr/churros/notella", "./"); err != nil {
 		fmt.Printf("Error adding Go comments: %v\n", err)
 	}
-	schema := reflector.Reflect(&notella.Message{})
+
+	writeTypescriptDefinition(reflector, "Message", &notella.Message{}, "typescript/message.ts")
+	writeTypescriptDefinition(reflector, "HealthResponse", &notella.HealthResponse{}, "typescript/health.ts")
+	reflector.FieldNameTag = "env"
+	writeTypescriptDefinition(reflector, "Configuration", &notella.Configuration{}, "typescript/configuration.ts")
+
+	// Also save useful constants
+	os.WriteFile("typescript/constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = '%s';\nexport const SUBJECT_NAME = '%s';\n", notella.StreamName, notella.SubjectName)), 0644)
+
+	// Write barrel
+	os.WriteFile("typescript/index.ts", []byte(strings.Join([]string{
+		"export * from './message.js';",
+		"export * from './configuration.js';",
+		"export * from './health.js';",
+		"export * from './constants.js';",
+	}, "\n")), 0644)
+}
+
+func writeTypescriptDefinition(reflector *jsonschema.Reflector, typename string, typ interface{}, filename string) {
+	schema := reflector.Reflect(typ)
 	schemaJSON, err := json.Marshal(schema)
 	if err != nil {
 		fmt.Printf("Error generating schema: %v\n", err)
@@ -24,7 +44,7 @@ func main() {
 	}
 
 	// Set up quicktype command to read from stdin
-	cmd := exec.Command("npm", "exec", "quicktype", "--", "--lang=ts", "--src-lang=schema", "--just-types", "--top-level=Message")
+	cmd := exec.Command("npm", "exec", "quicktype", "--", "--lang=ts", "--src-lang=schema", "--just-types", fmt.Sprintf("--top-level=%s", typename))
 
 	// Create a pipe to stdin for the quicktype command
 	stdin, err := cmd.StdinPipe()
@@ -81,8 +101,5 @@ func main() {
 	}
 
 	// Print or save the TypeScript output
-	os.WriteFile("types.ts", output, 0644)
-
-	// Also save useful constants
-	os.WriteFile("constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = '%s';\nexport const SUBJECT_NAME = '%s';\n", notella.StreamName, notella.SubjectName)), 0644)
+	os.WriteFile(filename, output, 0644)
 }

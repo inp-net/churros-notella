@@ -31,6 +31,7 @@ func main() {
 	ll.Log("", "reset", "contact email:     [bold]%s[reset]", config.ContactEmail)
 	ll.Log("", "reset", "Churros DB URL:    [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
 	ll.Log("", "reset", "Redis URL:         [bold]%s[reset]", redactURL(config.RedisURL))
+	ll.Log("", "reset", "Health check on:   [bold]:%d/health[reset]", config.HealthCheckPort)
 	ll.Log("", "reset", "App Package ID:    [bold]%s[reset]", config.AppPackageId)
 	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
 		ll.Log("", "reset", "VAPID keys:        [bold][green]set[reset]")
@@ -113,6 +114,9 @@ func main() {
 		ll.Log("Shuting down", "magenta", "because of signal received")
 		cancel()
 	}()
+
+	// Start healthcheck endpoint
+	go notella.StartHealthCheckEndpoint(config.HealthCheckPort)
 
 	// Send EventShowScheduledJobs to the stream every 5 minutes and save schedule to redis
 	go func() {

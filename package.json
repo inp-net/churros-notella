@@ -35,14 +35,12 @@
   },
   "files": [
     "README.md",
-    "constants.ts",
-    "types.ts",
-    "index.ts"
+    "typescript/*.ts"
   ],
   "exports": {
     ".": {
-      "default": "./index.ts",
-      "types": "./index.ts"
+      "default": "./typescript/index.ts",
+      "types": "./typescript/index.ts"
     }
   }
 }

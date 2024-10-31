@@ -20,6 +20,7 @@ type Configuration struct {
 	FirebaseServiceAccount     string `env:"FIREBASE_SERVICE_ACCOUNT"`
 	StartupScheduleRestoration string `env:"STARTUP_SCHEDULE_RESTORATION" envDefault:"enabled"`
 	AppPackageId               string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
+	HealthCheckPort            int    `env:"HEALTH_CHECK_PORT" envDefault:"8080"`
 }
 
 func LoadConfiguration() (Configuration, error) {
