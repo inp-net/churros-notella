@@ -50,7 +50,11 @@ func (msg Message) Run() error {
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		msg.CreateInDatabaseNotifications(group, subs)
+	}(&wg)
 	go func(wg *sync.WaitGroup) {
 		defer wg.Done()
 		err := msg.SendToFirebase(group, nativeSubs)

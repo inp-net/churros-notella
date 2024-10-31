@@ -46,17 +46,22 @@ func (id *ChurrosId) UnmarshalText(text []byte) error {
 	return nil
 }
 
-func CreateInDatabaseNotification(notification Message, endpoint string) error {
-	_, err := prisma.Notification.CreateOne(
-		db.Notification.Subscription.Link(
-			db.NotificationSubscription.Endpoint.Equals(endpoint),
-		),
-		db.Notification.Title.Set(notification.Title),
-		db.Notification.Body.Set(notification.Body),
-		db.Notification.ID.Set(notification.Id),
-	).Exec(context.Background())
-
-	return err
+func (msg Message) CreateInDatabaseNotifications(groupId string, subs []Subscription) {
+	// Create sequentially: this is not something that has to be done fast, and parallelizing would swamp the database connections
+	for _, sub := range subs {
+		prisma.Notification.CreateOne(
+			db.Notification.Subscription.Link(
+				db.NotificationSubscription.Endpoint.Equals(sub.Webpush.Endpoint),
+			),
+			db.Notification.Title.Set(msg.Title),
+			db.Notification.Body.Set(msg.Body),
+			db.Notification.ID.Set(msg.Id),
+			db.Notification.Channel.Set(msg.Channel()),
+			db.Notification.Group.Link(db.Group.ID.Equals(groupId)),
+			db.Notification.Goto.Set(msg.Action),
+			db.Notification.Timestamp.Set(msg.SendAt),
+		).Exec(context.Background())
+	}
 }
 
 func ConnectToDababase() error {
