@@ -49,7 +49,9 @@ export interface Action {
  */
 export enum Event {
     BookingPaid = "booking_paid",
+    ClearSchedule = "clear_schedule",
     ClearScheduledJobs = "clear_scheduled_jobs",
+    ClearStoredSchedule = "clear_stored_schedule",
     CommentReply = "comment_reply",
     ContributionPaid = "contribution_paid",
     Custom = "custom",
@@ -60,6 +62,9 @@ export enum Event {
     NewComment = "new_comment",
     NewPost = "new_post",
     PendingSignup = "pending_signup",
+    RestoreSchedule = "restore_schedule",
+    RestoreScheduleEager = "restore_schedule_eager",
+    SaveSchedule = "save_schedule",
     ShotgunClosesSoon = "shotgun_closes_soon",
     ShotgunOpensSoon = "shotgun_opens_soon",
     ShowScheduledJobs = "show_scheduled_jobs",
