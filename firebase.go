@@ -119,7 +119,10 @@ func setupFirebaseClient() (err error) {
 	}
 
 	ctxWithClient := context.WithValue(firebaseCtx, oauth2.HTTPClient, httpClient)
-	creds, _ := google.CredentialsFromJSON(ctxWithClient, []byte(config.FirebaseServiceAccount), "https://www.googleapis.com/auth/firebase.messaging")
+	creds, err := google.CredentialsFromJSON(ctxWithClient, []byte(config.FirebaseServiceAccount), "https://www.googleapis.com/auth/firebase.messaging")
+	if err != nil {
+		return fmt.Errorf("while setting credentials: %w", err)
+	}
 
 	client := &http.Client{
 		Transport: &oauth2.Transport{
