@@ -77,8 +77,7 @@ func (msg Message) Group() (string, error) {
 		}
 
 		return post.GroupID, nil
-	case EventShotgunClosesSoon:
-	case EventShotgunOpensSoon:
+	case EventShotgunClosesSoon, EventShotgunOpensSoon:
 		event, err := prisma.Event.FindUnique(
 			db.Event.ID.Equals(msg.ChurrosObjectId),
 		).Exec(context.Background())
@@ -86,11 +85,7 @@ func (msg Message) Group() (string, error) {
 			return "", fmt.Errorf("while getting the group responsible for the notification: %w", err)
 		}
 		return event.GroupID, nil
-	case EventCustom:
-	case EventGodchildAccepted:
-	case EventGodchildRejected:
-	case EventGodchildRequest:
-	case EventTest:
+	case EventCustom, EventGodchildAccepted, EventGodchildRejected, EventGodchildRequest, EventTest:
 		return "", nil
 	}
 
@@ -101,15 +96,11 @@ func (msg Message) Channel() db.NotificationChannel {
 	switch msg.Event {
 	case EventNewPost:
 		return db.NotificationChannelArticles
-	case EventShotgunClosesSoon:
-	case EventShotgunOpensSoon:
+	case EventShotgunClosesSoon, EventShotgunOpensSoon:
 		return db.NotificationChannelShotguns
-	case EventCommentReply:
-	case EventNewComment:
+	case EventCommentReply, EventNewComment:
 		return db.NotificationChannelComments
-	case EventGodchildRequest:
-	case EventGodchildAccepted:
-	case EventGodchildRejected:
+	case EventGodchildRequest, EventGodchildAccepted, EventGodchildRejected:
 		return db.NotificationChannelGodparentRequests
 	}
 

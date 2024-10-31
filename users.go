@@ -42,8 +42,7 @@ func Receivers(message Message) ([]string, error) {
 		return receiversForCommentReply(message)
 	case EventContributionPaid:
 		return receiversForContributionPaid(message)
-	case EventGodchildAccepted:
-	case EventGodchildRejected:
+	case EventGodchildAccepted, EventGodchildRejected:
 		return receiversForGodchildResponse(message)
 	case EventGodchildRequest:
 		return receiversForGodchildRequest(message)
@@ -58,7 +57,7 @@ func Receivers(message Message) ([]string, error) {
 		_, err := prisma.User.FindUnique(
 			db.User.ID.Equals(message.ChurrosObjectId),
 		).Exec(context.Background())
-		if err != nil {
+		if err == nil {
 			return []string{message.ChurrosObjectId}, nil
 		}
 	}
@@ -91,8 +90,7 @@ func receiversForPost(message Message) (userIds []string, err error) {
 	}
 
 	switch post.Visibility {
-	case db.VisibilityPrivate:
-	case db.VisibilityUnlisted:
+	case db.VisibilityPrivate, db.VisibilityUnlisted:
 		return []string{}, nil
 	case db.VisibilityPublic:
 		return AllUsers()
