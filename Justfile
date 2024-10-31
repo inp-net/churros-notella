@@ -14,11 +14,11 @@ build output="bin/server" tag="{{current_version}}":
 docker:
 	docker build -t uwun/notella:{{current_version}} . --build-arg TAG={{current_version}}
 	docker tag uwun/notella:{{current_version}} uwun/notella:latest
-	docker tag uwun/notella:{{current_version}} harbor.k8s.inpt.fr/net7/churros/notella:{{current_version}}
+	docker tag uwun/notella:{{current_version}} harbor.k8s.inpt.fr/net7/churros/notella:v{{current_version}}
 	docker tag uwun/notella:{{current_version}} harbor.k8s.inpt.fr/net7/churros/notella:latest
 	docker push uwun/notella:{{current_version}}
 	docker push uwun/notella:latest
-	docker push harbor.k8s.inpt.fr/net7/churros/notella:{{current_version}}
+	docker push harbor.k8s.inpt.fr/net7/churros/notella:v{{current_version}}
 	docker push harbor.k8s.inpt.fr/net7/churros/notella:latest
 
 

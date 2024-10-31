@@ -1,10 +1,10 @@
 ARG TAG=dev
 
 # Stage 1: Build the Go binary using Just
-FROM golang:1.23.2 AS builder
+FROM golang:1.23.2-alpine3.20 AS builder
 
 # Install Just in the builder stage
-RUN apt-get update && apt-get install -y curl 
+RUN apk add --no-cache curl bash git
 RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /app
 
 ENV PATH="/app:${PATH}"
@@ -26,16 +26,14 @@ COPY . .
 RUN /app/just build notella ${TAG}
 
 # Stage 2: Create a lightweight image with just the binary
-FROM alpine:latest
+FROM alpine:3.20 AS runner
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Copy the binary from the builder stage
-COPY --from=builder /app/notella .
-
-# Expose a port (optional)
-EXPOSE 8080
+COPY --from=builder /app/notella /app/notella
 
 # Command to run the binary
-CMD ["./notella"]
+CMD ["/app/notella"]
+ 
