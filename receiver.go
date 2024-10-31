@@ -18,8 +18,9 @@ func NatsReceiver(m *nats.Msg) error {
 		return fmt.Errorf("while unmarshaling received message: %w", err)
 	}
 
-	ll.Log("Received", "cyan", "%-10s | %-10s on %s", message.Id, message.Event, message.ChurrosObjectId)
-	CreateInDatabaseNotification(message, "feur")
+	if message.Event != EventShowScheduledJobs {
+		ll.Log("Received", "cyan", "%-10s | %-10s on %s", message.Id, message.Event, message.ChurrosObjectId)
+	}
 
 	if message.Event == EventClearScheduledJobs {
 		UnscheduleAllForObject(message.ChurrosObjectId)

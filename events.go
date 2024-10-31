@@ -8,6 +8,7 @@ const (
 	// EventClearScheduledJobs is used to clear all future scheduled jobs for a given churros object
 	// For example, when adding a new ticket to an event, we want to unschedule all future notifications for the event since the shotgun date may have changed
 	EventClearScheduledJobs Event = "clear_scheduled_jobs"
+	EventShowScheduledJobs  Event = "show_scheduled_jobs"
 	EventNewPost            Event = "new_post"
 	EventGodchildRequest    Event = "godchild_request"
 	EventNewComment         Event = "new_comment"
@@ -30,7 +31,7 @@ type Message struct {
 	// When to push the notification
 	SendAt time.Time `json:"send_at"`
 	// Type of event that triggered the notification
-	Event Event `json:"event" jsonschema:"enum=clear_scheduled_jobs,enum=new_post,enum=godchild_request,enum=new_comment,enum=comment_reply,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
+	Event Event `json:"event" jsonschema:"enum=clear_scheduled_jobs,enum=show_scheduled_jobs,enum=new_post,enum=godchild_request,enum=new_comment,enum=comment_reply,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
 	// Churros ID of the ressource (the ticket, the post, the comment, etc)
 	// Used to determine to whom the notification should be sent
 	// For godchild_request, this is not a user id, but a godparent request id.

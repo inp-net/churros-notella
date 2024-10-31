@@ -107,6 +107,28 @@ func main() {
 		cancel()
 	}()
 
+	// Send EventShowScheduledJobs to the stream every 5 minutes
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				msg := notella.Message{
+					Id:    fmt.Sprintf("show-jobs-%d:%d", time.Now().Hour(), time.Now().Minute()),
+					Event: notella.EventShowScheduledJobs,
+				}
+
+				_, err := js.Publish(notella.SubjectName, msg.JSONBytes())
+				if err != nil {
+					ll.ErrorDisplay("could not send scheduled jobs message", err)
+				}
+
+				time.Sleep(5 * time.Minute)
+			}
+		}
+	}()
+
 	// Continuously fetch and process messages
 	go func() {
 		for {

@@ -70,3 +70,11 @@ func (msg Message) JSONString() string {
 	}
 	return string(out)
 }
+
+func (msg Message) JSONBytes() []byte {
+	out, err := json.Marshal(msg)
+	if err != nil {
+		return nil
+	}
+	return out
+}
