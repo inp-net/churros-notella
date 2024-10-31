@@ -52,3 +52,19 @@ func subscriptionsOfUsers(ids []string) (subscriptions []Subscription, err error
 
 	return subscriptions, nil
 }
+
+func (sub Subscription) Destroy() error {
+	_, err := prisma.NotificationSubscription.FindUnique(
+		db.NotificationSubscription.Endpoint.Equals(sub.Webpush.Endpoint),
+	).Delete().Exec(context.Background())
+	return err
+}
+
+func FindSubscriptionByNativeToken(token string, subs []Subscription) (Subscription, bool) {
+	for _, sub := range subs {
+		if sub.FirebaseToken() == token {
+			return sub, true
+		}
+	}
+	return Subscription{}, false
+}

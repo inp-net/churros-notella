@@ -86,10 +86,11 @@ func (msg Message) SendWebPush(groupId string, subs []Subscription) error {
 
 			if err != nil {
 				ll.ErrorDisplay("could not send notification to %s", err, sub.Owner.Uid)
-			}
-
-			if resp.StatusCode >= 400 {
-				ll.ErrorDisplay("could not send notification to %s", err, sub.Owner.Uid)
+			} else if resp.StatusCode == 410 {
+				ll.Log("Deleting", "yellow", "invalid webpush subscription %s", sub.Webpush.Endpoint)
+				sub.Destroy()
+			} else if resp.StatusCode >= 400 {
+				ll.Error("could not send notification to %s: HTTP %d", sub.Owner.Uid, resp.StatusCode)
 			}
 
 		}(&wg, sub)

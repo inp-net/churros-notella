@@ -36,6 +36,9 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 
 	for _, tokensChunk := range chunkBy(tokens, MaxTokensPerRequest) {
 		go func(tokens []string) {
+			if len(tokens) == 0 {
+				return
+			}
 			message.Tokens = tokens
 			resp, err := fcm.SendEachForMulticast(firebaseCtx, &message)
 			if err != nil {
@@ -44,14 +47,23 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 				fcmErrors := make([]string, 0, resp.FailureCount)
 				for i, result := range resp.Responses {
 					if !result.Success {
-						fcmErrors = append(fcmErrors, fmt.Sprintf("%s: %s", tokens[i], result.Error))
+						if result.Error.Error() == "Requested entity was not found." {
+							if sub, found := FindSubscriptionByNativeToken(tokens[i], subs); found {
+								ll.Log("Deleting", "yellow", "invalid native subscription %s", tokens[i])
+								sub.Destroy()
+							}
+						} else {
+							fcmErrors = append(fcmErrors, fmt.Sprintf("%s: %s", tokens[i], result.Error))
+						}
 					}
 				}
-				ll.ErrorDisplay(
-					"some FCM messages failed for %d tokens",
-					fmt.Errorf("- %s", strings.Join(fcmErrors, "\n- ")),
-					resp.FailureCount,
-				)
+				if len(fcmErrors) > 0 {
+					ll.ErrorDisplay(
+						"some FCM messages failed for %d tokens",
+						fmt.Errorf("- %s", strings.Join(fcmErrors, "\n- ")),
+						resp.FailureCount,
+					)
+				}
 			}
 		}(tokensChunk)
 	}
