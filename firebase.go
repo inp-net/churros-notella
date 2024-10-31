@@ -11,6 +11,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	ll "github.com/ewen-lbh/label-logger-go"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
@@ -19,6 +20,8 @@ import (
 var firebaseClient *firebase.App
 var firebaseCtx = context.Background()
 
+const MaxTokensPerRequest = 490
+
 func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 	fcm, err := firebaseClient.Messaging(firebaseCtx)
 	if err != nil {
@@ -26,13 +29,34 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 	}
 
 	message := msg.FirebaseMessage(groupId)
-	message.Tokens = make([]string, len(subs))
+	tokens := make([]string, len(subs))
 	for i, sub := range subs {
-		message.Tokens[i] = sub.FirebaseToken()
+		tokens[i] = sub.FirebaseToken()
 	}
 
-	_, err = fcm.SendEachForMulticast(firebaseCtx, &message)
-	return err
+	for _, tokensChunk := range chunkBy(tokens, MaxTokensPerRequest) {
+		go func(tokens []string) {
+			message.Tokens = tokens
+			resp, err := fcm.SendEachForMulticast(firebaseCtx, &message)
+			if err != nil {
+				ll.ErrorDisplay("while sending FCM message", err)
+			} else if resp.FailureCount > 0 {
+				fcmErrors := make([]string, 0, resp.FailureCount)
+				for i, result := range resp.Responses {
+					if !result.Success {
+						fcmErrors = append(fcmErrors, fmt.Sprintf("%s: %s", tokens[i], result.Error))
+					}
+				}
+				ll.ErrorDisplay(
+					"some FCM messages failed for %d tokens",
+					fmt.Errorf("- %s", strings.Join(fcmErrors, "\n- ")),
+					resp.FailureCount,
+				)
+			}
+		}(tokensChunk)
+	}
+
+	return nil
 }
 
 func (msg Message) FirebaseMessage(groupId string) messaging.MulticastMessage {
