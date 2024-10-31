@@ -16,7 +16,7 @@ type Configuration struct {
 	VapidPrivateKey        string `env:"VAPID_PRIVATE_KEY"`
 	ContactEmail           string `env:"CONTACT_EMAIL"`
 	FirebaseServiceAccount string `env:"FIREBASE_SERVICE_ACCOUNT"`
-	AppPackageId           string `env:"APP_PACKAGE_ID" envDefault:"app.churrros"`
+	AppPackageId           string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
 }
 
 func LoadConfiguration() (Configuration, error) {
@@ -47,4 +47,11 @@ func init() {
 	if err != nil {
 		panic(fmt.Errorf("could not load configuration: %w", err))
 	}
+
+	err = setupFirebaseClient()
+	if err != nil {
+		panic(fmt.Errorf("could not setup firebase client: %w", err))
+	}
+	ll.Log("Initialized", "cyan", "firebase client")
+
 }

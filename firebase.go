@@ -4,14 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
 	"strings"
+	"time"
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"
 )
 
 var firebaseClient *firebase.App
+var firebaseCtx = context.Background()
 
 func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 	fcm, err := firebaseClient.Messaging(firebaseCtx)
@@ -69,9 +75,27 @@ type firebaseServiceAccount struct {
 }
 
 func setupFirebaseClient() (err error) {
-	firebaseClient, err = firebase.NewApp(context.Background(),
-		&firebase.Config{},
+	httpClient := http.DefaultClient
+	if os.Getenv("DEBUG") == "1" {
+		httpClient = &http.Client{
+			Transport: debugTransport{t: http.DefaultTransport},
+		}
+	}
+
+	ctxWithClient := context.WithValue(firebaseCtx, oauth2.HTTPClient, httpClient)
+	creds, _ := google.CredentialsFromJSON(ctxWithClient, []byte(config.FirebaseServiceAccount), "https://www.googleapis.com/auth/firebase.messaging")
+
+	client := &http.Client{
+		Transport: &oauth2.Transport{
+			Source: creds.TokenSource,
+			Base:   httpClient.Transport,
+		},
+		Timeout: 10 * time.Second,
+	}
+
+	firebaseClient, err = firebase.NewApp(firebaseCtx, nil,
 		option.WithCredentialsJSON([]byte(config.FirebaseServiceAccount)),
+		option.WithHTTPClient(client),
 	)
 	return
 }
