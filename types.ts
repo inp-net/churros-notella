@@ -49,6 +49,7 @@ export interface Action {
  */
 export enum Event {
     BookingPaid = "booking_paid",
+    ClearScheduledJobs = "clear_scheduled_jobs",
     CommentReply = "comment_reply",
     ContributionPaid = "contribution_paid",
     Custom = "custom",
@@ -58,7 +59,6 @@ export enum Event {
     LoginStuck = "login_stuck",
     NewComment = "new_comment",
     NewPost = "new_post",
-    NewTicket = "new_ticket",
     PendingSignup = "pending_signup",
     ShotgunClosesSoon = "shotgun_closes_soon",
     ShotgunOpensSoon = "shotgun_opens_soon",
