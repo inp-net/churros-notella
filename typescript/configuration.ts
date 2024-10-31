@@ -4,6 +4,7 @@ export interface Configuration {
     DATABASE_URL:                 string;
     FIREBASE_SERVICE_ACCOUNT:     string;
     HEALTH_CHECK_PORT:            number;
+    NATS_URL:                     string;
     PUBLIC_VAPID_KEY:             string;
     REDIS_URL:                    string;
     STARTUP_SCHEDULE_RESTORATION: string;
