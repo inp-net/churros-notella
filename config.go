@@ -58,9 +58,10 @@ func init() {
 
 	err = setupFirebaseClient()
 	if err != nil {
-		panic(fmt.Errorf("could not setup firebase client: %w", err))
+		ll.ErrorDisplay("could not setup firebase client", err)
+	} else {
+		ll.Log("Initialized", "cyan", "firebase client")
 	}
-	ll.Log("Initialized", "cyan", "firebase client")
 
 	redisClient = redis.NewClient(&redis.Options{
 		Addr: strings.TrimPrefix(config.RedisURL, "redis://"),

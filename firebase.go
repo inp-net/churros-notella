@@ -23,6 +23,10 @@ var firebaseCtx = context.Background()
 const MaxTokensPerRequest = 490
 
 func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
+	if firebaseClient == nil || !config.HasValidFirebaseServiceAccount() {
+		return nil
+	}
+
 	fcm, err := firebaseClient.Messaging(firebaseCtx)
 	if err != nil {
 		return fmt.Errorf("while initializing FCM client: %w", err)
