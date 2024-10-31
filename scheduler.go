@@ -33,6 +33,11 @@ func (job Message) IsScheduled() bool {
 }
 
 // StartScheduler starts the scheduler loop, which runs forever
+// TODO instead of having a in-memory scheduler, use jetstream:
+// 1. Get the message
+// 2. job.ShouldRun? if yes, run it
+// 3. otherwise, put it back at then end of the stream
+// this means that we'll have to do a lot of json marshalling/unmarshalling though, since we'll have to decode the message to check if we need to run it... is there a better way?
 func StartScheduler() {
 	for {
 		for _, job := range schedules.Items() {
