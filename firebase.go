@@ -13,25 +13,28 @@ import (
 
 var firebaseClient *firebase.App
 
-func (msg Message) SendToFirebase(groupId string, sub Subscription) error {
-	fcm, err := firebaseClient.Messaging(context.Background())
+func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
+	fcm, err := firebaseClient.Messaging(firebaseCtx)
 	if err != nil {
 		return fmt.Errorf("while initializing FCM client: %w", err)
 	}
 
 	message := msg.FirebaseMessage(groupId)
-	message.Token = sub.FirebaseToken()
-	_, err = fcm.Send(context.Background(), &message)
+	message.Tokens = make([]string, len(subs))
+	for i, sub := range subs {
+		message.Tokens[i] = sub.FirebaseToken()
+	}
 
+	_, err = fcm.SendEachForMulticast(firebaseCtx, &message)
 	return err
 }
 
-func (msg Message) FirebaseMessage(groupId string) messaging.Message {
+func (msg Message) FirebaseMessage(groupId string) messaging.MulticastMessage {
 	clickAction := ""
 	if len(msg.Actions) > 0 {
 		clickAction = msg.Actions[0].Label
 	}
-	return messaging.Message{
+	return messaging.MulticastMessage{
 		Data: map[string]string{
 			"original": msg.JSONString(),
 		},

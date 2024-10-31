@@ -2,8 +2,8 @@ package notella
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
+	"sync"
 
 	"git.inpt.fr/churros/notella/db"
 	"github.com/SherClockHolmes/webpush-go"
@@ -65,25 +65,36 @@ func (msg Message) WebPush(groupId string) WebPushNotification {
 	}
 }
 
-func (msg Message) SendWebPush(groupId string, sub Subscription) error {
+func (msg Message) SendWebPush(groupId string, subs []Subscription) error {
+
 	jsoned, err := json.Marshal(msg.WebPush(groupId))
 	if err != nil {
 		ll.ErrorDisplay("could not marshal notification to json", err)
 	}
 
-	resp, err := webpush.SendNotification(jsoned, &sub.Webpush, &webpush.Options{
-		TTL:             30,
-		Subscriber:      config.ContactEmail,
-		VAPIDPublicKey:  config.VapidPublicKey,
-		VAPIDPrivateKey: config.VapidPrivateKey,
-	})
-	if err != nil {
-		return fmt.Errorf("could not send notification to %s: %w", sub.Owner.Uid, err)
-	}
+	var wg sync.WaitGroup
+	wg.Add(len(subs))
+	for _, sub := range subs {
+		go func(wg *sync.WaitGroup, sub Subscription) {
+			resp, err := webpush.SendNotification(jsoned, &sub.Webpush, &webpush.Options{
+				TTL:             30,
+				Subscriber:      config.ContactEmail,
+				VAPIDPublicKey:  config.VapidPublicKey,
+				VAPIDPrivateKey: config.VapidPrivateKey,
+			})
+			wg.Done()
 
-	if resp.StatusCode >= 400 {
-		return fmt.Errorf("could not send notification to %s: %s", sub.Owner.Uid, resp.Status)
+			if err != nil {
+				ll.ErrorDisplay("could not send notification to %s", err, sub.Owner.Uid)
+			}
+
+			if resp.StatusCode >= 400 {
+				ll.ErrorDisplay("could not send notification to %s", err, sub.Owner.Uid)
+			}
+
+		}(&wg, sub)
 	}
+	wg.Wait()
 
 	return nil
 }

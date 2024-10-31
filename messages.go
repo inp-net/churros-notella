@@ -36,30 +36,37 @@ func (msg Message) Run() error {
 
 	ll.Log("Sending", "green", "notification for %s on %s to %d users (%d subscriptions)", msg.Event, msg.ChurrosObjectId, len(users), len(subs))
 
-	var wg sync.WaitGroup
-
-	wg.Add(len(subs))
-
-	// Parallelize sending the notifications
+	// Separate native and webpush subscriptions
+	nativeSubs := make([]Subscription, 0, len(subs))
+	webpushSubs := make([]Subscription, 0, len(subs))
 	for _, sub := range subs {
-		ll.Debug("sending notification to %#v", sub)
-		go func(wg *sync.WaitGroup, sub Subscription) {
-			if sub.IsWebpush() {
-				err := msg.SendWebPush(group, sub)
-				if err != nil {
-					ll.ErrorDisplay("could not send webpush notification", err)
-				}
-			} else {
-				err := msg.SendToFirebase(group, sub)
-				if err != nil {
-					ll.ErrorDisplay("could not send firebase notification", err)
-				}
-			}
-			wg.Done()
-		}(&wg, sub)
+		if sub.IsNative() {
+			nativeSubs = append(nativeSubs, sub)
+		} else if sub.IsWebpush() {
+			webpushSubs = append(webpushSubs, sub)
+		} else {
+			ll.Warn("invalid subscription %#v", sub)
+		}
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		err := msg.SendToFirebase(group, nativeSubs)
+		if err != nil {
+			ll.ErrorDisplay("could not send notification via firebase", err)
+		}
+	}(&wg)
+	go func(wg *sync.WaitGroup) {
+		defer wg.Done()
+		err := msg.SendWebPush(group, webpushSubs)
+		if err != nil {
+			ll.ErrorDisplay("could not send notification via webpush", err)
+		}
+	}(&wg)
 	wg.Wait()
+
 	return nil
 }
 
