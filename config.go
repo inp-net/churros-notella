@@ -3,15 +3,18 @@ package notella
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/caarlos0/env/v11"
 	ll "github.com/ewen-lbh/label-logger-go"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 )
 
 type Configuration struct {
 	Port                   int    `env:"PORT" envDefault:"8080"`
 	ChurrosDatabaseURL     string `env:"DATABASE_URL"`
+	RedisURL               string `env:"REDIS_URL"`
 	VapidPublicKey         string `env:"PUBLIC_VAPID_KEY"`
 	VapidPrivateKey        string `env:"VAPID_PRIVATE_KEY"`
 	ContactEmail           string `env:"CONTACT_EMAIL"`
@@ -54,4 +57,8 @@ func init() {
 	}
 	ll.Log("Initialized", "cyan", "firebase client")
 
+	redisClient = redis.NewClient(&redis.Options{
+		Addr: strings.TrimPrefix(config.RedisURL, "redis://"),
+	})
+	ll.Log("Initialized", "cyan", "redis client")
 }

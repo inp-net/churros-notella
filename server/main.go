@@ -25,10 +25,12 @@ func main() {
 
 	config, _ := notella.LoadConfiguration()
 
+	ll.Info("Server time is %s", time.Now().Format("2006-01-02 15:04:05 -07:00:00"))
 	ll.Info("Running with config ")
 	ll.Log("", "reset", "port:            [bold]%d[reset]", config.Port)
 	ll.Log("", "reset", "contact email:   [bold]%s[reset]", config.ContactEmail)
 	ll.Log("", "reset", "Churros DB URL:  [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
+	ll.Log("", "reset", "Redis URL:       [bold]%s[reset]", redactURL(config.RedisURL))
 	ll.Log("", "reset", "App Package ID:  [bold]%s[reset]", config.AppPackageId)
 	if config.VapidPublicKey != "" && config.VapidPrivateKey != "" {
 		ll.Log("", "reset", "VAPID keys:      [bold][green]set[reset]")
@@ -41,6 +43,9 @@ func main() {
 		ll.Log("", "reset", "Firebase:        [bold][red]unconfigured[reset]")
 	}
 	fmt.Println()
+
+	notella.RestoreSchedule()
+	notella.DisplaySchedule()
 
 	ll.Info("starting scheduler")
 	go notella.StartScheduler()
@@ -107,24 +112,16 @@ func main() {
 		cancel()
 	}()
 
-	// Send EventShowScheduledJobs to the stream every 5 minutes
+	// Send EventShowScheduledJobs to the stream every 5 minutes and save schedule to redis
 	go func() {
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			default:
-				msg := notella.Message{
-					Id:    fmt.Sprintf("show-jobs-%d:%d", time.Now().Hour(), time.Now().Minute()),
-					Event: notella.EventShowScheduledJobs,
-				}
-
-				_, err := js.Publish(notella.SubjectName, msg.JSONBytes())
-				if err != nil {
-					ll.ErrorDisplay("could not send scheduled jobs message", err)
-				}
-
 				time.Sleep(5 * time.Minute)
+				notella.DisplaySchedule()
+				notella.SaveSchedule()
 			}
 		}
 	}()
