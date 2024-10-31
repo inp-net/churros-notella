@@ -14,6 +14,7 @@ import (
 type Configuration struct {
 	ChurrosDatabaseURL         string `env:"DATABASE_URL"`
 	RedisURL                   string `env:"REDIS_URL"`
+	NatsURL                    string `env:"NATS_URL" envDefault:"nats://localhost:4222"`
 	VapidPublicKey             string `env:"PUBLIC_VAPID_KEY"`
 	VapidPrivateKey            string `env:"VAPID_PRIVATE_KEY"`
 	ContactEmail               string `env:"CONTACT_EMAIL"`

@@ -29,6 +29,7 @@ func main() {
 	ll.Info("Running with config ")
 	ll.Log("", "reset", "Schedule recovery: [bold][dim]at startup [reset][bold]%s[reset]", config.StartupScheduleRestoration)
 	ll.Log("", "reset", "contact email:     [bold]%s[reset]", config.ContactEmail)
+	ll.Log("", "reset", "NATS URL:          [bold]%s[reset]", redactURL(config.NatsURL))
 	ll.Log("", "reset", "Churros DB URL:    [bold]%s[reset]", redactURL(config.ChurrosDatabaseURL))
 	ll.Log("", "reset", "Redis URL:         [bold]%s[reset]", redactURL(config.RedisURL))
 	ll.Log("", "reset", "Health check on:   [bold]:%d/health[reset]", config.HealthCheckPort)
@@ -59,10 +60,10 @@ func main() {
 		ll.ErrorDisplay("could not connect to database", err)
 	}
 
-	ll.Log("Connecting", "cyan", "to NATS server at [bold]%s[reset]", nats.DefaultURL)
-	nc, err := nats.Connect(nats.DefaultURL)
+	ll.Log("Connecting", "cyan", "to NATS server at [bold]%s[reset]", config.NatsURL)
+	nc, err := nats.Connect(config.NatsURL)
 	if err != nil {
-		ll.ErrorDisplay("could not connect to NATS at %s", err, nats.DefaultURL)
+		ll.ErrorDisplay("could not connect to NATS at %s", err, config.NatsURL)
 		return
 	}
 

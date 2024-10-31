@@ -74,9 +74,9 @@ func CheckRedisHealth() error {
 }
 
 func CheckNATSHealth() error {
-	nc, err := nats.Connect(nats.DefaultURL)
+	nc, err := nats.Connect(config.NatsURL)
 	if err != nil {
-		return fmt.Errorf("could not connect to NATS at %s: %w", nats.DefaultURL, err)
+		return fmt.Errorf("could not connect to NATS at %s: %w", config.NatsURL, err)
 	}
 
 	_, err = nc.JetStream()
