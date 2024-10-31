@@ -62,5 +62,6 @@ export enum Event {
     PendingSignup = "pending_signup",
     ShotgunClosesSoon = "shotgun_closes_soon",
     ShotgunOpensSoon = "shotgun_opens_soon",
+    ShowScheduledJobs = "show_scheduled_jobs",
     Test = "test",
 }
