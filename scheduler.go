@@ -11,6 +11,15 @@ func (job Message) Unschedule() {
 	schedules.Remove(job.Id)
 }
 
+func UnscheduleAllForObject(objectId string) {
+	ll.Log("Unscheduling", "yellow", "all jobs for %s", objectId)
+	for _, job := range schedules.Items() {
+		if job.ChurrosObjectId == objectId {
+			job.Unschedule()
+		}
+	}
+}
+
 func (job Message) Schedule() {
 	ll.Log("Scheduling", "magenta", "%s for %s", job.Id, job.SendAt)
 	schedules.Set(job.Id, job)

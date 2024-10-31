@@ -246,6 +246,8 @@ func receiversForShotgunOpens(message Message) (userIds []string, err error) {
 		),
 	).Exec(context.Background())
 
+	userIds = make([]string, 0)
+
 	switch shotgun.Visibility {
 	case db.VisibilityPublic:
 		return AllUsers()
