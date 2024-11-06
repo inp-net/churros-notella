@@ -12,7 +12,7 @@ require (
 	github.com/shopspring/decimal v1.4.0
 	github.com/steebchen/prisma-client-go v0.42.0
 	golang.org/x/oauth2 v0.23.0
-	google.golang.org/api v0.203.0
+	google.golang.org/api v0.205.0
 )
 
 require (
