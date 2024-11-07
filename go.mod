@@ -11,7 +11,7 @@ require (
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/shopspring/decimal v1.4.0
 	github.com/steebchen/prisma-client-go v0.42.0
-	golang.org/x/oauth2 v0.23.0
+	golang.org/x/oauth2 v0.24.0
 	google.golang.org/api v0.203.0
 )
 
