@@ -1,7 +1,7 @@
 ARG TAG=dev
 
 # Stage 1: Build the Go binary using Just
-FROM golang:1.23.2-alpine3.20 AS builder
+FROM golang:1.23.3-alpine3.20 AS builder
 
 # Install Just in the builder stage
 RUN apk add --no-cache curl bash git
