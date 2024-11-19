@@ -1,72 +1,47 @@
-export interface Message {
-    /**
-     * URL to go to when the action button is clicked
-     */
-    action: string;
-    /**
-     * Additional action buttons
-     */
-    actions?: Action[];
-    /**
-     * Notification body
-     */
-    body: string;
-    /**
-     * Type of event that triggered the notification
-     */
-    event: Event;
-    /**
-     * Unique ID for the notification scheduling request.
-     */
-    id: string;
-    /**
-     * URL to an image to display in the notification
-     */
-    image?: string;
-    /**
-     * Churros ID of the ressource (the ticket, the post, the comment, etc)
-     * Used to determine to whom the notification should be sent
-     * For godchild_request, this is not a user id, but a godparent request id.
-     */
-    object_id: string;
-    /**
-     * When to push the notification
-     */
-    send_at: Date;
-    /**
-     * Notification title
-     */
-    title: string;
-}
+import * as z from "zod";
 
-export interface Action {
-    action: string;
-    label:  string;
-}
+// Type of event that triggered the notification
 
-/**
- * Type of event that triggered the notification
- */
-export enum Event {
-    BookingPaid = "booking_paid",
-    ClearSchedule = "clear_schedule",
-    ClearScheduledJobs = "clear_scheduled_jobs",
-    ClearStoredSchedule = "clear_stored_schedule",
-    CommentReply = "comment_reply",
-    ContributionPaid = "contribution_paid",
-    Custom = "custom",
-    GodchildAccepted = "godchild_accepted",
-    GodchildRejected = "godchild_rejected",
-    GodchildRequest = "godchild_request",
-    LoginStuck = "login_stuck",
-    NewComment = "new_comment",
-    NewPost = "new_post",
-    PendingSignup = "pending_signup",
-    RestoreSchedule = "restore_schedule",
-    RestoreScheduleEager = "restore_schedule_eager",
-    SaveSchedule = "save_schedule",
-    ShotgunClosesSoon = "shotgun_closes_soon",
-    ShotgunOpensSoon = "shotgun_opens_soon",
-    ShowScheduledJobs = "show_scheduled_jobs",
-    Test = "test",
-}
+export const EventSchema = z.enum([
+    "booking_paid",
+    "clear_schedule",
+    "clear_scheduled_jobs",
+    "clear_stored_schedule",
+    "comment_reply",
+    "contribution_paid",
+    "custom",
+    "godchild_accepted",
+    "godchild_rejected",
+    "godchild_request",
+    "login_stuck",
+    "new_comment",
+    "new_post",
+    "pending_signup",
+    "restore_schedule",
+    "restore_schedule_eager",
+    "save_schedule",
+    "shotgun_closes_soon",
+    "shotgun_opens_soon",
+    "show_scheduled_jobs",
+    "test",
+]);
+export type Event = z.infer<typeof EventSchema>;
+
+export const ActionSchema = z.object({
+    "action": z.string(),
+    "label": z.string(),
+});
+export type Action = z.infer<typeof ActionSchema>;
+
+export const MessageSchema = z.object({
+    "action": z.string(),
+    "actions": z.array(ActionSchema).optional(),
+    "body": z.string(),
+    "event": EventSchema,
+    "id": z.string(),
+    "image": z.string().optional(),
+    "object_id": z.string(),
+    "send_at": z.coerce.date(),
+    "title": z.string(),
+});
+export type Message = z.infer<typeof MessageSchema>;

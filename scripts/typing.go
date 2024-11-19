@@ -35,7 +35,7 @@ func main() {
 	}, "\n")), 0644)
 }
 
-func writeTypescriptDefinition(reflector *jsonschema.Reflector, typename string, typ interface{}, filename string) {
+func writeTypescriptDefinition(reflector *jsonschema.Reflector, typename string, typ interface{}, filename string, zod bool) {
 	schema := reflector.Reflect(typ)
 	schemaJSON, err := json.Marshal(schema)
 	if err != nil {
@@ -44,7 +44,12 @@ func writeTypescriptDefinition(reflector *jsonschema.Reflector, typename string,
 	}
 
 	// Set up quicktype command to read from stdin
-	cmd := exec.Command("npm", "exec", "quicktype", "--", "--lang=ts", "--src-lang=schema", "--just-types", fmt.Sprintf("--top-level=%s", typename))
+	var cmd *exec.Cmd
+	if zod {
+		cmd = exec.Command("npm", "exec", "quicktype", "--", "--lang=typescript-zod", "--src-lang=schema", fmt.Sprintf("--top-level=%s", typename))
+	} else {
+		cmd = exec.Command("npm", "exec", "quicktype", "--", "--lang=ts", "--just-types", "--src-lang=schema",fmt.Sprintf("--top-level=%s", typename))
+	}
 
 	// Create a pipe to stdin for the quicktype command
 	stdin, err := cmd.StdinPipe()
