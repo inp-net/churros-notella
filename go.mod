@@ -3,7 +3,7 @@ module git.inpt.fr/churros/notella
 go 1.23.2
 
 require (
-	firebase.google.com/go/v4 v4.15.0
+	firebase.google.com/go/v4 v4.15.1
 	github.com/caarlos0/env/v11 v11.2.2
 	github.com/ewen-lbh/label-logger-go v0.1.1
 	github.com/joho/godotenv v1.5.1
