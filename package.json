@@ -26,12 +26,12 @@
   "type": "module",
   "devDependencies": {
     "nats": "^2.28.2",
-    "prisma": "^5.20.0",
+    "prisma": "^6.0.0",
     "quicktype": "^23.0.170",
     "tsx": "^4.19.2"
   },
   "dependencies": {
-    "@prisma/client": "^5.20.0"
+    "@prisma/client": "^6.0.0"
   },
   "files": [
     "README.md",
