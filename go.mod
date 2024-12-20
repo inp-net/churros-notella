@@ -4,7 +4,7 @@ go 1.23.2
 
 require (
 	firebase.google.com/go/v4 v4.15.1
-	github.com/caarlos0/env/v11 v11.2.2
+	github.com/caarlos0/env/v11 v11.3.1
 	github.com/ewen-lbh/label-logger-go v0.1.3
 	github.com/joho/godotenv v1.5.1
 	github.com/nats-io/nats.go v1.37.0
