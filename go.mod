@@ -67,7 +67,7 @@ require (
 )
 
 require (
-	github.com/SherClockHolmes/webpush-go v1.3.0
+	github.com/SherClockHolmes/webpush-go v1.4.0
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/gosuri/uilive v0.0.4 // indirect
 	github.com/gosuri/uiprogress v0.0.1 // indirect
