@@ -1,12 +1,21 @@
 .buildkit:
   image:
     name: moby/buildkit:rootless
-    entrypoint: ['sh', '-c']
+    entrypoint: ["sh", "-c"]
   variables:
     BUILDKITD_FLAGS: --oci-worker-no-process-sandbox
   before_script:
-    - mkdir ~/.docker
-    - cp $HARBOR_CONFIG_JSON ~/.docker/config.json
+    - |
+      mkdir -p ~/.docker && cat > ~/.docker/config.json <<EOF
+      {
+        "auths": {
+          "$CI_REGISTRY": {
+            "auth": "$(echo -n "$CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD" | base64)"
+          }
+        }
+      }
+      EOF
+
 
 deploy:
   extends: .buildkit
@@ -22,5 +31,5 @@ deploy:
           --local context=. \
           --local dockerfile=. \
           --opt build-arg:TAG=$TAG \
-          --output type=image,name=$HARBOR_REGISTRY_IMAGE/notella:v$TAG,push=true
-    - echo "Successfully built and pushed $HARBOR_REGISTRY_IMAGE/notella:v$TAG"
+          --output type=image,name=$CI_REGISTRY_IMAGE:v$TAG,push=true
+    - echo "Successfully built and pushed $CI_REGISTRY_IMAGE:v$TAG"
