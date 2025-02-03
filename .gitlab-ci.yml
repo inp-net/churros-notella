@@ -52,7 +52,7 @@ test:up-to-date-prisma-schema:
     - cp schema.prisma original_schema.prisma
   script:
     - |
-      if [ diff -q schema.prisma original_schema.prisma ]; then
+      if diff -q schema.prisma original_schema.prisma; then
         echo "Generated schema.prisma is different from original, please run 'just updateschema' and commit the changes"
         exit 1
       fi
