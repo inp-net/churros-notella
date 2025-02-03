@@ -20,7 +20,7 @@ stages:
   - test
   - build
 
-test:
+test:typescript:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
   stage: test
   rules:
@@ -39,6 +39,22 @@ test:
           exit 1
         fi
       done
+
+test:up-to-date-prisma-schema:
+  image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  stage: test
+  rules:
+    - when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  before_script:
+    - apk add curl 
+    - just updateschema
+    - cp schema.prisma original_schema.prisma
+    - |
+      if [ diff -q schema.prisma original_schema.prisma ]; then
+        echo "Generated schema.prisma is different from original, please run 'just updateschema' and commit the changes"
+        exit 1
+      fi
 
 build:
   extends: .buildkit
