@@ -45,16 +45,32 @@ test:up-to-date-prisma-schema:
   stage: test
   rules:
     - when: always
-    - if: $CI_PIPELINE_SOURCE == "schedule"
   before_script:
     - apk add curl 
     - just updateschema
     - cp schema.prisma original_schema.prisma
+  script:
     - |
       if [ diff -q schema.prisma original_schema.prisma ]; then
         echo "Generated schema.prisma is different from original, please run 'just updateschema' and commit the changes"
         exit 1
       fi
+
+update:prisma-schema:
+  image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "trigger"
+  before_script:
+    - apk add curl 
+    - just updateschema
+    - git config --global user.name gitlab
+    - git config --global user.email "git@noreply.inpt.fr"
+    - git remote add gitlab_origin https://changesets:$CHANGESETS_TOKEN@$CI_SERVER_SHELL_SSH_HOST/$CI_PROJECT_PATH || true
+  script:
+    - git add schema.prisma
+    - 'git commit -m "chore(prisma): update schema.prisma after churros/churros change"'
+    - git push gitlab_origin HEAD:main
 
 build:
   extends: .buildkit
