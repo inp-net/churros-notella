@@ -16,8 +16,8 @@ install:
 	just build
 	cp bin/server ~/.local/bin/notella
 
-updateschema:
-	curl -fsSL https://git.inpt.fr/churros/churros/-/raw/main/packages/db/prisma/schema.prisma -o schema.prisma
+updateschema url="https://git.inpt.fr/churros/churros/-/raw/main/packages/db/prisma/schema.prisma":
+	curl -fsSL {{url}} -o schema.prisma
 	sed -i '/^generator .* {/,/^}/d' schema.prisma
 	sed -i '1i\
 	generator goprisma {\n\
