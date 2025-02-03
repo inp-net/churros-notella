@@ -1,13 +1,6 @@
 ARG TAG=dev
 
-# Stage 1: Build the Go binary using Just
-FROM golang:1.23.4-alpine3.20 AS builder
-
-# Install Just in the builder stage
-RUN apk add --no-cache curl bash git
-RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to /app
-
-ENV PATH="/app:${PATH}"
+FROM registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
