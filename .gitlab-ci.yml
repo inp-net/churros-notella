@@ -25,11 +25,12 @@ test:
   stage: test
   rules:
     - when: always
-  script:
-    - apk add git
+  before_script:
+    - apk add git npm 
     - cp -r typescript typescript_original
     - just build
     - just gen_typescript
+  script:
     - |
       for file in typescript/*.ts; do
         if ! diff -q $file typescript_original/$(basename $file); then
@@ -39,6 +40,18 @@ test:
         fi
       done
 
+build-typescript:
+  stage: build
+  image: node:22-alpine
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
+  before_script:
+    - apk add npm git
+  script:
+    - just gen_typescript 
+    - npm version minor
+    
+
 build:
   extends: .buildkit
   stage: build
@@ -46,9 +59,6 @@ build:
     - if: $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+/
       variables:
         DEPLOY: "true"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      variables:
-        DEPLOY: "false"
   script:
     - |
       if [ "$DEPLOY" == "true" ]; then
