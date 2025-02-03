@@ -26,7 +26,9 @@ test:
   rules:
     - when: always
   script:
+    - apk add git
     - cp -r typescript typescript_original
+    - just build
     - just gen_typescript
     - |
       for file in typescript/*.ts; do
