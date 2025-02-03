@@ -61,7 +61,7 @@ update:prisma-schema:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
   stage: update
   rules:
-    - if: $CI_PIPELINE_SOURCE == "trigger"
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
   before_script:
     - apk add curl 
     - just updateschema
