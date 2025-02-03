@@ -68,7 +68,8 @@ update:prisma-schema:
     - just updateschema $SCHEMA_RAW_URL
     - git config --global user.name gitlab
     - git config --global user.email "git@noreply.inpt.fr"
-    - git remote add gitlab_origin https://bot:$BOT_TOKEN@$CI_SERVER_SHELL_SSH_HOST/$CI_PROJECT_PATH || true
+    - git remote remove gitlab_origin || true
+    - git remote add gitlab_origin https://bot:$BOT_TOKEN@$CI_SERVER_SHELL_SSH_HOST/$CI_PROJECT_PATH 
   script:
     - git add schema.prisma
     - 'git commit -m "chore(prisma): update schema.prisma after churros/churros change"'
