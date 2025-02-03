@@ -48,6 +48,10 @@ func (id *ChurrosId) UnmarshalText(text []byte) error {
 }
 
 func (msg Message) CreateInDatabaseNotifications(groupId string, subs []Subscription) {
+	if config.DryRunMode {
+		ll.Warn("dry run mode enabled, not creating notifications in database")
+		return
+	}
 	// Create sequentially: this is not something that has to be done fast, and parallelizing would swamp the database connections
 	for _, sub := range subs {
 		prisma.Notification.CreateOne(

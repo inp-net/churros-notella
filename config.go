@@ -22,6 +22,7 @@ type Configuration struct {
 	StartupScheduleRestoration string `env:"STARTUP_SCHEDULE_RESTORATION" envDefault:"enabled"`
 	AppPackageId               string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
 	HealthCheckPort            int    `env:"HEALTH_CHECK_PORT" envDefault:"8080"`
+	DryRunMode                 bool   `env:"DRY_RUN" envDefault:"false"`
 }
 
 func LoadConfiguration() (Configuration, error) {

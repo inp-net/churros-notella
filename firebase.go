@@ -44,6 +44,10 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 				return
 			}
 			message.Tokens = tokens
+			if config.DryRunMode {
+				ll.Warn("dry run mode enabled, not sending FCM message to %d tokens", len(tokens))
+				return
+			}
 			resp, err := fcm.SendEachForMulticast(firebaseCtx, &message)
 			if err != nil {
 				ll.ErrorDisplay("while sending FCM message", err)
