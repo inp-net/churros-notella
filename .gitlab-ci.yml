@@ -60,6 +60,7 @@ test:up-to-date-prisma-schema:
 update:prisma-schema:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
   stage: update
+  allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
     - when: manual
