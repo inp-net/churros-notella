@@ -34,12 +34,8 @@ func Receivers(message Message) ([]string, error) {
 	switch message.Event {
 	case EventNewPost:
 		return receiversForPost(message)
-	case EventNewComment:
-		return receiversForNewComment(message)
 	case EventBookingPaid:
 		return receiversForBookingPaid(message)
-	case EventCommentReply:
-		return receiversForCommentReply(message)
 	case EventContributionPaid:
 		return receiversForContributionPaid(message)
 	case EventGodchildAccepted, EventGodchildRejected:
@@ -110,32 +106,6 @@ func receiversForPost(message Message) (userIds []string, err error) {
 	return userIds, fmt.Errorf("unknown post visibility %q", post.Visibility)
 }
 
-func receiversForNewComment(message Message) (userIds []string, err error) {
-	comment, err := prisma.Comment.FindUnique(
-		db.Comment.ID.Equals(message.ChurrosObjectId),
-	).With(
-		db.Comment.Article.Fetch(),
-	).Exec(context.Background())
-	if err != nil {
-		err = fmt.Errorf("while getting comment: %w", err)
-		return
-	}
-
-	post, ok := comment.Article()
-	if !ok {
-		err = fmt.Errorf("comment %q has no parent post", comment.ID)
-		return
-	}
-
-	authorId, ok := post.AuthorID()
-	if !ok {
-		err = fmt.Errorf("post %q has no author", post.ID)
-		return
-	}
-
-	return []string{authorId}, nil
-}
-
 func receiversForBookingPaid(message Message) (userIds []string, err error) {
 	booking, err := prisma.Registration.FindUnique(
 		db.Registration.ID.Equals(message.ChurrosObjectId),
@@ -157,32 +127,6 @@ func receiversForBookingPaid(message Message) (userIds []string, err error) {
 	}
 
 	return
-}
-
-func receiversForCommentReply(message Message) (userIds []string, err error) {
-	comment, err := prisma.Comment.FindUnique(
-		db.Comment.ID.Equals(message.ChurrosObjectId),
-	).With(
-		db.Comment.InReplyTo.Fetch(),
-	).Exec(context.Background())
-	if err != nil {
-		err = fmt.Errorf("while getting comment: %w", err)
-		return
-	}
-
-	parent, ok := comment.InReplyTo()
-	if !ok {
-		err = fmt.Errorf("comment %q has no parent", comment.ID)
-		return
-	}
-
-	authorId, ok := parent.AuthorID()
-	if !ok {
-		err = fmt.Errorf("comment %q has no author", parent.ID)
-		return
-	}
-
-	return []string{authorId}, nil
 }
 
 func receiversForContributionPaid(message Message) (userIds []string, err error) {

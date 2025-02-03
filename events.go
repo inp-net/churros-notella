@@ -17,8 +17,6 @@ const (
 	EventClearSchedule        Event = "clear_schedule"
 	EventNewPost              Event = "new_post"
 	EventGodchildRequest      Event = "godchild_request"
-	EventNewComment           Event = "new_comment"
-	EventCommentReply         Event = "comment_reply"
 	EventCustom               Event = "custom"
 	EventTest                 Event = "test"
 	EventGodchildAccepted     Event = "godchild_accepted"
