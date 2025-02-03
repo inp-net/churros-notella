@@ -2,7 +2,6 @@ export interface Configuration {
     APP_PACKAGE_ID:               string;
     CONTACT_EMAIL:                string;
     DATABASE_URL:                 string;
-    DRY_RUN:                      boolean;
     FIREBASE_SERVICE_ACCOUNT:     string;
     HEALTH_CHECK_PORT:            number;
     NATS_URL:                     string;
