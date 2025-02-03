@@ -17,6 +17,7 @@
       EOF
 
 stages:
+  - update
   - test
   - build
 
@@ -58,7 +59,7 @@ test:up-to-date-prisma-schema:
 
 update:prisma-schema:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
-  stage: test
+  stage: update
   rules:
     - if: $CI_PIPELINE_SOURCE == "trigger"
   before_script:
