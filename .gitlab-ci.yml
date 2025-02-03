@@ -26,11 +26,16 @@ test:
   rules:
     - when: always
   before_script:
-    - apk add git npm 
+    - apk add git npm jq
     - cp -r typescript typescript_original
     - just build
     - just gen_typescript
   script:
+    - |
+      if [ "$(git tag -l | tail -1)" != "v$(jq -r .version package.json)" ]; then
+        echo "Latest tag does not match package.json version, update the typescript package version then commit the changes"
+        exit 1
+      fi
     - |
       for file in typescript/*.ts; do
         if ! diff -q $file typescript_original/$(basename $file); then
