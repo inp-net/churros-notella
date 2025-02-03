@@ -11,10 +11,6 @@ build output="bin/server" tag="{{current_version}}":
 	go mod tidy
 	go build -v -ldflags="-X main.Version={{tag}}" -o {{output}} server/*.go
 
-docker:
-	docker build -t uwun/notella:{{current_version}} . --build-arg TAG={{current_version}}
-	docker push harbor.k8s.inpt.fr/net7/churros/notella:v{{current_version}}
-
 
 install:
 	just build
