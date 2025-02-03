@@ -16,7 +16,7 @@ COPY Justfile .
 COPY . .
 
 # Build the Go binary using Just
-RUN /app/just build notella ${TAG}
+RUN just build notella ${TAG}
 
 # Stage 2: Create a lightweight image with just the binary
 FROM alpine:3.21 AS runner
