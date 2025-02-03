@@ -40,9 +40,26 @@ spec:
                   key: uri
             - name: DATABASE_URL
               value: $(DATABASE_BASE_URL)?pool_timeout=60
+            - name: APP_PACKAGE_ID
+              valueFrom:
+                configMapKeyRef:
+                  key: PUBLIC_APP_PACKAGE_ID
+                  name: churros-config
+            - name: FIREBASE_SERVICE_ACCOUNT
+              valueFrom:
+                secretKeyRef:
+                  key: FIREBASE_ADMIN_SERVICE_ACCOUNT_KEY
+                  name: churros-secrets
+            - name: CONTACT_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  key: PUBLIC_CONTACT_EMAIL
+                  name: churros-config
           envFrom:
             - configMapRef:
                 name: churros-config
+            - configMapRef:
+                name: notella-config
             - secretRef:
                 name: churros-secrets
       initContainers:
