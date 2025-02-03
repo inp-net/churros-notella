@@ -4,12 +4,12 @@ commonLabels:
   app: nats
 
 configMapGenerator:
-- name: churros-nats-config
+- name: notella-nats-config
   files:
   - nats.conf
 
 secretGenerator:
-- name: churros-nats-jetstream-secrets
+- name: notella-nats-jetstream-secrets
   literals:
   - JETSTREAM_PASSWORD=jetstream
 

@@ -23,7 +23,7 @@ spec:
         - containerPort: 8222
         envFrom:
         - configMapRef:
-            name: nats-config
+            name: notella-nats-config
         env:
         - name: POD_NAME
           valueFrom:
@@ -38,4 +38,4 @@ spec:
       volumes:
       - name: nats-config-file
         configMap:
-          name: nats-config
+          name: notella-nats-config
