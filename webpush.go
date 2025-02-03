@@ -7,7 +7,7 @@ import (
 
 	"git.inpt.fr/churros/notella/db"
 	"github.com/SherClockHolmes/webpush-go"
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 )
 
 type WebPushNotification struct {

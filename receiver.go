@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 	"github.com/nats-io/nats.go"
 )
 

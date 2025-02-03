@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/caarlos0/env/v11"
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 )

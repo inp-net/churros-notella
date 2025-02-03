@@ -11,7 +11,7 @@ import (
 
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/messaging"
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/option"

@@ -22,7 +22,7 @@ updateschema:
 	sed -i '1i\
 	generator goprisma {\n\
 	provider        = "go run github.com/steebchen/prisma-client-go"\n\
-	previewFeatures = ["fullTextSearch", "postgresqlExtensions"]\n\
+	previewFeatures = ["fullTextSearchPostgres", "postgresqlExtensions"]\n\
 	}\
 	' schema.prisma
 	go run github.com/steebchen/prisma-client-go format

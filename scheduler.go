@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 	cmap "github.com/orcaman/concurrent-map/v2"
 
 	"github.com/redis/go-redis/v9"

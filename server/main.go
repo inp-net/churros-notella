@@ -12,7 +12,7 @@ import (
 
 	"git.inpt.fr/churros/notella"
 	"github.com/common-nighthawk/go-figure"
-	ll "github.com/ewen-lbh/label-logger-go"
+	ll "github.com/gwennlbh/label-logger-go"
 	"github.com/nats-io/nats.go"
 )
 
@@ -26,7 +26,11 @@ func main() {
 	config, _ := notella.LoadConfiguration()
 
 	ll.Info("Server time is %s", time.Now().Format("2006-01-02 15:04:05 -07:00:00"))
-	ll.Info("Running with config ")
+	if config.DryRunMode {
+		ll.Info("Running [bold]in dry run mode[reset] with")
+	} else {
+		ll.Info("Running with config ")
+	}
 	ll.Log("", "reset", "Schedule recovery: [bold][dim]at startup [reset][bold]%s[reset]", config.StartupScheduleRestoration)
 	ll.Log("", "reset", "contact email:     [bold]%s[reset]", config.ContactEmail)
 	ll.Log("", "reset", "NATS URL:          [bold]%s[reset]", redactURL(config.NatsURL))

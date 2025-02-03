@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"git.inpt.fr/churros/notella/db"
+	ll "github.com/gwennlbh/label-logger-go"
 )
 
 var prisma = db.NewClient()
