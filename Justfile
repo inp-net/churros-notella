@@ -7,6 +7,7 @@ dev:
 	go run server/*.go
 
 build output="bin/server" tag="{{current_version}}":
+	echo "Building version {{current_version}}"
 	just genprisma
 	go mod tidy
 	go build -v -ldflags="-X main.Version={{tag}}" -o {{output}} server/*.go
