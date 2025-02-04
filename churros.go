@@ -70,7 +70,7 @@ func (msg Message) CreateInDatabaseNotifications(groupId string, subs []Subscrip
 }
 
 func ConnectToDababase() error {
-		return prisma.Prisma.QueryRaw("SELECT 1").Exec(context.Background(), nil)
+	return prisma.Connect()
 }
 
 // Group returns the Churros group ID responsible for the notification

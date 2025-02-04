@@ -88,7 +88,7 @@ func CheckNATSHealth() error {
 }
 
 func CheckChurrosDatabaseHealth() error {
-	return ConnectToDababase()
+	return prisma.Prisma.QueryRaw("SELECT 1").Exec(context.Background(), nil)
 }
 
 func CheckFirebaseHealth() error {
