@@ -35,7 +35,6 @@ genprisma:
 
 gen_typescript:
 	go run scripts/typing.go 
-	npm run tsc typescript/*
 
 generate:
 	just updateschema

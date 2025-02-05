@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "declaration": true,
+    "outDir": "typescript-dist",
+    "rootDir": "typescript",
+    "strict": true
+  },
+  "include": ["typescript"]
+}

@@ -39,13 +39,13 @@
   },
   "files": [
     "README.md",
-    "typescript/*.ts",
-    "typescript/*.js"
+    "typescript-dist/*.js",
+    "typescript/*.ts"
   ],
   "exports": {
     ".": {
-      "default": "./typescript/index.js",
-      "types": "./typescript/index.ts"
+      "types": "./typescript/index.ts",
+      "default": "./typescript-dist/index.js"
     }
   }
 }
