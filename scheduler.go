@@ -101,9 +101,9 @@ func UnscheduleAllForObject(objectId string) {
 
 func DisplaySchedule() {
 	ll.Log("Showing", "magenta", "%d scheduled jobs", schedules.Count())
-	ll.Log("", "reset", "[dim]%-15s | %-20s | %-20s", "ID", "Event", "Object ID")
+	ll.Log("", "reset", "[dim]%-15s | %-20s | %-20s | %s", "ID", "Event", "Object ID", "Fire at")
 	for _, job := range schedules.Items() {
-		ll.Log("", "reset", "%-15s | %-20s | %-20s", job.Id, job.Event, job.ChurrosObjectId)
+		ll.Log("", "reset", "%-15s | %-20s | %-20s | %s", job.Id, job.Event, job.ChurrosObjectId, job.SendAt)
 	}
 }
 
