@@ -18,6 +18,8 @@ import (
 
 var Version = "DEV"
 
+var consumerSub *nats.Subscription
+
 func main() {
 	figure.NewColorFigure("Notella", "", "yellow", true).Print()
 	fmt.Printf("%38s\n", fmt.Sprintf("美味しそう〜 v%s", Version))
@@ -101,7 +103,7 @@ func main() {
 
 	ll.Log("Starting", "cyan", "consumer [bold]NotellaConsumer[reset]")
 
-	sub, err := js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
+	consumerSub, err = js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
 	if err != nil {
 		ll.ErrorDisplay("could not start consumer", err)
 		return
@@ -145,13 +147,13 @@ func main() {
 				return
 			default:
 				// Fetch messages in batches
-				msgs, err := sub.Fetch(10, nats.MaxWait(5*time.Second))
+				msgs, err := consumerSub.Fetch(10, nats.MaxWait(5*time.Second))
 				if err != nil {
 					if err == nats.ErrTimeout {
 						ll.WarnDisplay("Timed out fetching messages", err)
 					} else if err == nats.ErrBadSubscription {
 						ll.WarnDisplay("Subscription is not valid anymore, trying to reconnect to consumer", err)
-						sub, err := js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
+						consumerSub, err = js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
 						if err != nil {
 							ll.ErrorDisplay("could not start consumer", err)
 							return
