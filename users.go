@@ -48,6 +48,8 @@ func Receivers(message Message) ([]string, error) {
 		return receiversForShotgunOpens(message)
 	case EventShotgunClosesSoon:
 		return receiversForShotgunCloses(message)
+	case EventTest:
+		return []string{}, fmt.Errorf("test event is for subscriptions, not users")
 	}
 
 	// For other events, assume the message churros object id is the user id
