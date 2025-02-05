@@ -146,10 +146,23 @@ func main() {
 			default:
 				// Fetch messages in batches
 				msgs, err := sub.Fetch(10, nats.MaxWait(5*time.Second))
-				if err != nil && err != nats.ErrTimeout {
-					ll.ErrorDisplay("Could not fetch messages", err)
-					time.Sleep(2 * time.Second) // Wait before retrying
-					continue
+				if err != nil {
+					if err == nats.ErrTimeout {
+						ll.WarnDisplay("Timed out fetching messages", err)
+					} else if err == nats.ErrBadSubscription {
+						ll.WarnDisplay("Subscription is not valid anymore, trying to reconnect to consumer", err)
+						sub, err := js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
+						if err != nil {
+							ll.ErrorDisplay("could not start consumer", err)
+							return
+						}
+						continue
+
+					} else {
+						ll.ErrorDisplay("Could not fetch messages", err)
+						time.Sleep(2 * time.Second) // Wait before retrying
+						continue
+					}
 				}
 
 				// Process each message
