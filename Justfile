@@ -6,11 +6,11 @@ dev:
 	go fmt
 	go run server/*.go
 
-build output="bin/server" tag="{{current_version}}":
+build output="bin/server":
 	echo "Building version {{current_version}}"
 	just genprisma
 	go mod tidy
-	go build -v -ldflags="-X main.Version={{tag}}" -o {{output}} server/*.go
+	go build -v -ldflags="-X main.Version={{current_version}}" -o {{output}} server/*.go
 
 
 install:
