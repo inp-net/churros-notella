@@ -1,0 +1,27 @@
+[Module: null prototype] {
+  Event: {
+    BookingPaid: 'booking_paid',
+    ClearSchedule: 'clear_schedule',
+    ClearScheduledJobs: 'clear_scheduled_jobs',
+    ClearStoredSchedule: 'clear_stored_schedule',
+    CommentReply: 'comment_reply',
+    ContributionPaid: 'contribution_paid',
+    Custom: 'custom',
+    GodchildAccepted: 'godchild_accepted',
+    GodchildRejected: 'godchild_rejected',
+    GodchildRequest: 'godchild_request',
+    LoginStuck: 'login_stuck',
+    NewComment: 'new_comment',
+    NewPost: 'new_post',
+    PendingSignup: 'pending_signup',
+    RestoreSchedule: 'restore_schedule',
+    RestoreScheduleEager: 'restore_schedule_eager',
+    SaveSchedule: 'save_schedule',
+    ShotgunClosesSoon: 'shotgun_closes_soon',
+    ShotgunOpensSoon: 'shotgun_opens_soon',
+    ShowScheduledJobs: 'show_scheduled_jobs',
+    Test: 'test'
+  },
+  STREAM_NAME: 'notella:stream',
+  SUBJECT_NAME: 'notella:notification'
+}
