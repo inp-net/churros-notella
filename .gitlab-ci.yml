@@ -40,6 +40,12 @@ test:typescript:
           exit 1
         fi
       done
+    - |
+      mkdir -p testarea; cd testarea
+      npm init
+      npm add -S git+$CI_PROJECT_URL#$CI_COMMIT_HASH
+      echo "import * as notella from '@inp-net/notella'; console.log(notella)" > index.js
+      node index.js
 
 test:up-to-date-prisma-schema:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
