@@ -11,7 +11,7 @@ require (
 	github.com/gwennlbh/label-logger-go v0.1.5
 	github.com/invopop/jsonschema v0.13.0
 	github.com/joho/godotenv v1.5.1
-	github.com/nats-io/nats.go v1.38.0
+	github.com/nats-io/nats.go v1.39.0
 	github.com/orcaman/concurrent-map/v2 v2.0.1
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/shopspring/decimal v1.4.0
