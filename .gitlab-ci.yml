@@ -86,10 +86,9 @@ release-after-prisma-schema-update:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release\]$/
     - when: manual
   script:
-    - go get -v -u github.com/usvc/semver/cmd/semver
+    - go get github.com/guilhem/bump@v0.2.3
     - git fetch --tags
-    - latest_tag=$(git tag -l --sort=-v:refname | head -1)
-    - git tag v$(semver bump minor $latest_tag)
+    - bump minor 
     - git push --tags
 
 
