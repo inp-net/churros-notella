@@ -81,12 +81,14 @@ update:prisma-schema:
 
 release-after-prisma-schema-update:
   extends: .gitops
-  stage: build
+  stage: update
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release]/
   script:
     - mkdir -p $HOME/go
-    - GOPATH=$HOME/go go get github.com/guilhem/bump@v0.2.3
+    - GOPATH=$HOME/go go install github.com/guilhem/bump@v0.2.3
+    - ls $HOME/go
+    - ls $HOME/go/bin
     - git fetch --tags
     - $HOME/go/bin/bump minor 
     - git push --tags
