@@ -85,12 +85,10 @@ release-after-prisma-schema-update:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release]/
   script:
-    - mkdir -p $HOME/go
-    - GOPATH=$HOME/go go install github.com/guilhem/bump@v0.2.3
-    - ls $HOME/go
-    - ls $HOME/go/bin
+    - wget https://github.com/watawuwu/bump/releases/download/v0.4.3/bump-v0.4.3-x86_64-unknown-linux-gnu.tar.gz -O - | tar -xz 
     - git fetch --tags
-    - $HOME/go/bin/bump minor 
+    - latest_tag=$(git tag -l --sort=-v:refname | head -n 1)
+    - git tag $(./bump minor $latest_tag)
     - git push --tags
 
 
