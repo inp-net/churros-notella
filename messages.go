@@ -19,6 +19,8 @@ func (msg Message) Run() error {
 		return fmt.Errorf("could not determine who to send the notification to: %w", err)
 	}
 
+	ll.Debug("Sending notification for %s on %s to %d users: %v", msg.Event, msg.ChurrosObjectId, len(users), users)
+
 	subs, err := subscriptionsOfUsers(users)
 	if err != nil {
 		return fmt.Errorf("could not determine which subscriptions to send the notification to: %w", err)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"git.inpt.fr/churros/notella/db"
+	ll "github.com/gwennlbh/label-logger-go"
 )
 
 // AllUsers returns all the users in the database that have at least one notification subscription
@@ -31,6 +32,7 @@ func AllUsers() ([]string, error) {
 
 // Receivers determines which users to send the notification to
 func Receivers(message Message) ([]string, error) {
+	ll.Debug("Determining receivers for message %s on %s", message.Event, message.ChurrosObjectId)
 	switch message.Event {
 	case EventNewPost:
 		return receiversForPost(message)

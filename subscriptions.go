@@ -6,6 +6,7 @@ import (
 
 	"git.inpt.fr/churros/notella/db"
 	"github.com/SherClockHolmes/webpush-go"
+	ll "github.com/gwennlbh/label-logger-go"
 )
 
 type SubscriptionOwner struct {
@@ -49,6 +50,8 @@ func subscriptionsOfUsers(ids []string) (subscriptions []Subscription, err error
 			},
 		})
 	}
+
+	ll.Debug("Found %d subscriptions for %d users %v", len(subscriptions), len(ids), ids)
 
 	return subscriptions, nil
 }
