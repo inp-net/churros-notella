@@ -21,6 +21,27 @@ type Subscription struct {
 	Owner   SubscriptionOwner    `json:"owner"`
 }
 
+func (msg Message) ShouldSendTo() (subs []Subscription, userIds []string, err error) {
+	if msg.Event == EventTest {
+		sub, err := prisma.NotificationSubscription.FindUnique(db.NotificationSubscription.ID.Equals(msg.ChurrosObjectId)).With(db.NotificationSubscription.Owner.Fetch()).Exec(context.Background())
+		return []Subscription{SubscriptionFromDatabase(*sub)}, []string{}, err
+	}
+
+	users, err := Receivers(msg)
+	if err != nil {
+		return []Subscription{}, users, fmt.Errorf("could not determine who to send the notification to: %w", err)
+	}
+
+	ll.Debug("Sending notification for %s on %s to %d users: %v", msg.Event, msg.ChurrosObjectId, len(users), users)
+
+	subs, err = subscriptionsOfUsers(users)
+	if err != nil {
+		return []Subscription{}, users, fmt.Errorf("could not determine which subscriptions to send the notification to: %w", err)
+	}
+
+	return subs, []string{}, nil
+}
+
 func subscriptionsOfUsers(ids []string) (subscriptions []Subscription, err error) {
 	if err := prisma.Prisma.Connect(); err != nil {
 		return nil, fmt.Errorf("could not connect to prisma: %w", err)
@@ -34,26 +55,30 @@ func subscriptionsOfUsers(ids []string) (subscriptions []Subscription, err error
 	}
 
 	for _, sub := range subs {
-		subscriptions = append(subscriptions, Subscription{
-			Webpush: webpush.Subscription{
-				Endpoint: sub.Endpoint,
-				Keys: webpush.Keys{
-					Auth:   sub.AuthKey,
-					P256dh: sub.P256DhKey,
-				},
-			},
-			Owner: SubscriptionOwner{
-				Id:        sub.OwnerID,
-				Uid:       sub.Owner().UID,
-				FirstName: sub.Owner().FirstName,
-				LastName:  sub.Owner().LastName,
-			},
-		})
+		subscriptions = append(subscriptions, SubscriptionFromDatabase(sub))
 	}
 
 	ll.Debug("Found %d subscriptions for %d users %v", len(subscriptions), len(ids), ids)
 
 	return subscriptions, nil
+}
+
+func SubscriptionFromDatabase(sub db.NotificationSubscriptionModel) Subscription {
+	return Subscription{
+		Webpush: webpush.Subscription{
+			Endpoint: sub.Endpoint,
+			Keys: webpush.Keys{
+				Auth:   sub.AuthKey,
+				P256dh: sub.P256DhKey,
+			},
+		},
+		Owner: SubscriptionOwner{
+			Id:        sub.OwnerID,
+			Uid:       sub.Owner().UID,
+			FirstName: sub.Owner().FirstName,
+			LastName:  sub.Owner().LastName,
+		},
+	}
 }
 
 func (sub Subscription) Destroy() error {
