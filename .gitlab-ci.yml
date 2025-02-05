@@ -85,9 +85,10 @@ release-after-prisma-schema-update:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release]/
   script:
-    - go get github.com/guilhem/bump@v0.2.3
+    - mkdir -p $HOME/go
+    - GOPATH=$HOME/go go get github.com/guilhem/bump@v0.2.3
     - git fetch --tags
-    - bump minor 
+    - $HOME/go/bin/bump minor 
     - git push --tags
 
 
