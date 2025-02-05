@@ -42,10 +42,16 @@ test:typescript:
       done
     - |
       mkdir -p testarea; cd testarea
-      npm init
+      npm init -y
+      jq '.type = "module"' < package.json > package.json.new
+      mv package.json.new package.json
       npm add -S git+$CI_PROJECT_URL#$CI_COMMIT_HASH
       echo "import * as notella from '@inp-net/notella'; console.log(notella)" > index.js
-      node index.js
+      node index.js > lib.txt
+      if ! diff -q lib.txt ../typescript/lib.txt; then
+        diff lib.txt ../typescript/lib.txt
+        echo Runtime library has different values, re-run just gen_typescript and commit the changes
+      fi
 
 test:up-to-date-prisma-schema:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
