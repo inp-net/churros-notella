@@ -150,7 +150,7 @@ func main() {
 				msgs, err := consumerSub.Fetch(10, nats.MaxWait(5*time.Second))
 				if err != nil {
 					if err == nats.ErrTimeout {
-						ll.WarnDisplay("Timed out fetching messages", err)
+						// ok
 					} else if err == nats.ErrBadSubscription {
 						ll.WarnDisplay("Subscription is not valid anymore, trying to reconnect to consumer", err)
 						consumerSub, err = js.PullSubscribe(notella.SubjectName, "NotellaConsumer")
