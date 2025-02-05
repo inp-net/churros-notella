@@ -3,6 +3,7 @@ export interface Configuration {
     CONTACT_EMAIL:                string;
     DATABASE_URL:                 string;
     DRY_RUN:                      boolean;
+    DRY_RUN_EXCEPTIONS:           string[];
     FIREBASE_SERVICE_ACCOUNT:     string;
     HEALTH_CHECK_PORT:            number;
     NATS_URL:                     string;

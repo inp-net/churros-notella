@@ -48,12 +48,31 @@ func (id *ChurrosId) UnmarshalText(text []byte) error {
 }
 
 func (msg Message) CreateInDatabaseNotifications(groupId string, subs []Subscription) {
-	if config.DryRunMode {
+	if config.DryRunMode && len(config.DryRunExceptions) == 0 {
 		ll.Warn("dry run mode enabled, not creating notifications in database")
 		return
 	}
+
+	subsFilter := func(sub Subscription) bool { return true }
+
+	if len(config.DryRunExceptions) > 0 && config.DryRunMode {
+		ll.Warn("dry run mode enabled: only creating notifications in database for %+v", config.DryRunExceptions)
+		subsFilter = func(sub Subscription) bool {
+			for _, username := range config.DryRunExceptions {
+				if username == sub.Owner.Uid {
+					return true
+				}
+			}
+			return false
+		}
+	}
+
 	// Create sequentially: this is not something that has to be done fast, and parallelizing would swamp the database connections
 	for _, sub := range subs {
+		if !subsFilter(sub) {
+			continue
+		}
+
 		prisma.Notification.CreateOne(
 			db.Notification.Subscription.Link(
 				db.NotificationSubscription.Endpoint.Equals(sub.Webpush.Endpoint),

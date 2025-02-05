@@ -32,10 +32,30 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 		return fmt.Errorf("while initializing FCM client: %w", err)
 	}
 
+	if config.DryRunMode && len(config.DryRunExceptions) == 0 {
+		ll.Warn("dry run mode enabled, not sending FCM message to %d tokens", len(subs))
+		return nil
+	}
+
 	message := msg.FirebaseMessage(groupId)
-	tokens := make([]string, len(subs))
-	for i, sub := range subs {
-		tokens[i] = sub.FirebaseToken()
+	tokens := make([]string, 0, len(subs))
+	for _, sub := range subs {
+		if config.DryRunMode {
+			exempt := false
+			for _, username := range config.DryRunExceptions {
+				if username == sub.Owner.Uid {
+					exempt = true
+				}
+			}
+			if !exempt {
+				continue
+			}
+		}
+		tokens = append(tokens, sub.FirebaseToken())
+	}
+
+	if config.DryRunMode {
+		ll.Warn("dry run mode enabled, only sending FCM message to %d tokens (owned by %+v)", len(tokens), config.DryRunExceptions)
 	}
 
 	for _, tokensChunk := range chunkBy(tokens, MaxTokensPerRequest) {
@@ -44,10 +64,6 @@ func (msg Message) SendToFirebase(groupId string, subs []Subscription) error {
 				return
 			}
 			message.Tokens = tokens
-			if config.DryRunMode {
-				ll.Warn("dry run mode enabled, not sending FCM message to %d tokens", len(tokens))
-				return
-			}
 			resp, err := fcm.SendEachForMulticast(firebaseCtx, &message)
 			if err != nil {
 				ll.ErrorDisplay("while sending FCM message", err)
