@@ -85,7 +85,8 @@ release-after-prisma-schema-update:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release]/
   script:
-    - wget https://github.com/watawuwu/bump/releases/download/v0.4.3/bump-v0.4.3-x86_64-unknown-linux-gnu.tar.gz -O - | tar -xz 
+    - wget https://github.com/watawuwu/bump/releases/download/v0.4.3/bump-v0.4.3-x86_64-unknown-linux-gnu.tar.gz -O - | tar -xz
+    - ls
     - git fetch --tags
     - latest_tag=$(git tag -l --sort=-v:refname | head -n 1)
     - git tag $(./bump minor $latest_tag)
