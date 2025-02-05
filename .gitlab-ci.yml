@@ -84,7 +84,6 @@ release-after-prisma-schema-update:
   stage: build
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release]/
-    - when: manual
   script:
     - go get github.com/guilhem/bump@v0.2.3
     - git fetch --tags
