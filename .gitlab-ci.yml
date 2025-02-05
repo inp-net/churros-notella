@@ -51,6 +51,7 @@ test:typescript:
       if ! diff -q lib.txt ../typescript/lib.txt; then
         diff lib.txt ../typescript/lib.txt
         echo Runtime library has different values, re-run just gen_typescript and commit the changes
+        exit 1
       fi
 
 test:up-to-date-prisma-schema:
