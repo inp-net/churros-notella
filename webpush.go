@@ -77,9 +77,17 @@ func (msg Message) SendWebPush(groupId string, subs []Subscription) error {
 	for _, sub := range subs {
 		go func(wg *sync.WaitGroup, sub Subscription) {
 			if config.DryRunMode {
-				ll.Warn("dry run mode enabled, not sending webpush notification to %s", sub.Owner.Uid)
-				wg.Done()
-				return
+				exempt := false
+				for _, username := range config.DryRunExceptions {
+					if username == sub.Owner.Uid {
+						exempt = true
+					}
+				}
+				if !exempt {
+					ll.Warn("dry run mode enabled, not sending webpush notification to %s", sub.Owner.Uid)
+					wg.Done()
+					return
+				}
 			}
 			resp, err := webpush.SendNotification(jsoned, &sub.Webpush, &webpush.Options{
 				TTL:             30,

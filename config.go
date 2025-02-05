@@ -12,17 +12,18 @@ import (
 )
 
 type Configuration struct {
-	ChurrosDatabaseURL         string `env:"DATABASE_URL"`
-	RedisURL                   string `env:"REDIS_URL"`
-	NatsURL                    string `env:"NATS_URL" envDefault:"nats://localhost:4222"`
-	VapidPublicKey             string `env:"PUBLIC_VAPID_KEY"`
-	VapidPrivateKey            string `env:"VAPID_PRIVATE_KEY"`
-	ContactEmail               string `env:"CONTACT_EMAIL"`
-	FirebaseServiceAccount     string `env:"FIREBASE_SERVICE_ACCOUNT"`
-	StartupScheduleRestoration string `env:"STARTUP_SCHEDULE_RESTORATION" envDefault:"enabled"`
-	AppPackageId               string `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
-	HealthCheckPort            int    `env:"HEALTH_CHECK_PORT" envDefault:"8080"`
-	DryRunMode                 bool   `env:"DRY_RUN" envDefault:"false"`
+	ChurrosDatabaseURL         string   `env:"DATABASE_URL"`
+	RedisURL                   string   `env:"REDIS_URL"`
+	NatsURL                    string   `env:"NATS_URL" envDefault:"nats://localhost:4222"`
+	VapidPublicKey             string   `env:"PUBLIC_VAPID_KEY"`
+	VapidPrivateKey            string   `env:"VAPID_PRIVATE_KEY"`
+	ContactEmail               string   `env:"CONTACT_EMAIL"`
+	FirebaseServiceAccount     string   `env:"FIREBASE_SERVICE_ACCOUNT"`
+	StartupScheduleRestoration string   `env:"STARTUP_SCHEDULE_RESTORATION" envDefault:"enabled"`
+	AppPackageId               string   `env:"APP_PACKAGE_ID" envDefault:"app.churros"`
+	HealthCheckPort            int      `env:"HEALTH_CHECK_PORT" envDefault:"8080"`
+	DryRunMode                 bool     `env:"DRY_RUN" envDefault:"false"`
+	DryRunExceptions           []string `env:"DRY_RUN_EXCEPTIONS"`
 }
 
 func LoadConfiguration() (Configuration, error) {

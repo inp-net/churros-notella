@@ -28,10 +28,12 @@ func main() {
 	config, _ := notella.LoadConfiguration()
 
 	ll.Info("Server time is %s", time.Now().Format("2006-01-02 15:04:05 -07:00:00"))
-	if config.DryRunMode {
+	if config.DryRunMode && len(config.DryRunExceptions) > 0 {
+		ll.Info("Running [bold]in dry run mode, [red]except for %+v[reset] with")
+	} else if config.DryRunMode {
 		ll.Info("Running [bold]in dry run mode[reset] with")
 	} else {
-		ll.Info("Running with config ")
+		ll.Info("Running with config")
 	}
 	ll.Log("", "reset", "Schedule recovery: [bold][dim]at startup [reset][bold]%s[reset]", config.StartupScheduleRestoration)
 	ll.Log("", "reset", "contact email:     [bold]%s[reset]", config.ContactEmail)
