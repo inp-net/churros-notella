@@ -57,24 +57,41 @@ test:up-to-date-prisma-schema:
         exit 1
       fi
 
-update:prisma-schema:
+.gitops:
   image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  before_script:
+    - git config --global user.name gitlab
+    - git config --global user.email "git@noreply.inpt.fr"
+    - git remote remove gitlab_origin || true
+    - git remote add gitlab_origin https://bot:$BOT_TOKEN@$CI_SERVER_SHELL_SSH_HOST/$CI_PROJECT_PATH 
+
+update:prisma-schema:
+  extends: .gitops
   stage: update
   allow_failure: true
   rules:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
     - when: manual
-  before_script:
+  script:
     - apk add curl 
     - just updateschema $SCHEMA_RAW_URL
-    - git config --global user.name gitlab
-    - git config --global user.email "git@noreply.inpt.fr"
-    - git remote remove gitlab_origin || true
-    - git remote add gitlab_origin https://bot:$BOT_TOKEN@$CI_SERVER_SHELL_SSH_HOST/$CI_PROJECT_PATH 
-  script:
     - git add schema.prisma
-    - 'git commit -m "chore(prisma): update schema.prisma after churros/churros change"'
+    - 'git commit -m "chore(prisma): update schema.prisma after churros/churros change [ci release]"'
     - git push gitlab_origin HEAD:main
+
+release-after-prisma-schema-update:
+  extends: .gitops
+  stage: build
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TITLE =~ /\[ci release\]$/
+    - when: manual
+  script:
+    - go get -v -u github.com/usvc/semver/cmd/semver
+    - git fetch --tags
+    - latest_tag=$(git tag -l --sort=-v:refname | head -1)
+    - git tag v$(semver bump minor $latest_tag)
+    - git push --tags
+
 
 build:
   extends: .buildkit
