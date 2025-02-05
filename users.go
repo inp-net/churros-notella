@@ -105,6 +105,7 @@ func receiversForPost(message Message) (userIds []string, err error) {
 		for _, member := range post.Group().Members() {
 			userIds = append(userIds, member.MemberID)
 		}
+		return
 	}
 
 	return userIds, fmt.Errorf("unknown post visibility %q", post.Visibility)
