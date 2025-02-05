@@ -92,6 +92,10 @@ func CheckChurrosDatabaseHealth() error {
 }
 
 func CheckFirebaseHealth() error {
+	if !config.HasValidFirebaseServiceAccount() {
+		return nil
+	}
+
 	fcm, err := firebaseClient.Messaging(firebaseCtx)
 	if err != nil {
 		return fmt.Errorf("while initializing messaging client: %w", err)
