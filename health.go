@@ -20,7 +20,7 @@ type HealthResponse struct {
 }
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
-	ll.Log("Checking", "cyan", "health due to request from %s", r.RemoteAddr)
+	ll.Debug("Checking health due to request from %s", r.RemoteAddr)
 	// Set the content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
