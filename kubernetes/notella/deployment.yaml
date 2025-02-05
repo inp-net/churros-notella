@@ -20,7 +20,7 @@ spec:
           name: api
           readinessProbe:
             initialDelaySeconds: 5
-            periodSeconds: 10
+            periodSeconds: 60
             httpGet:
               scheme: HTTP
               path: /health
