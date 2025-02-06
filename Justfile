@@ -22,7 +22,7 @@ updateschema url="https://git.inpt.fr/churros/churros/-/raw/main/packages/db/pri
 	sed -i '/^generator .* {/,/^}/d' schema.prisma
 	sed -i '1i\
 	generator goprisma {\n\
-	provider        = "go run github.com/steebchen/prisma-client-go"\n\
+	provider		= "go run github.com/steebchen/prisma-client-go"\n\
 	previewFeatures = ["fullTextSearchPostgres", "postgresqlExtensions"]\n\
 	}\
 	' schema.prisma
@@ -30,10 +30,11 @@ updateschema url="https://git.inpt.fr/churros/churros/-/raw/main/packages/db/pri
 
 
 genprisma:
-    go get github.com/steebchen/prisma-client-go 
-    go run github.com/steebchen/prisma-client-go generate
+	go get github.com/steebchen/prisma-client-go 
+	go run github.com/steebchen/prisma-client-go generate
 
 gen_typescript:
+	bash scripts/sync-event-enum.sh
 	go run scripts/typing.go 
 
 generate:

@@ -35,7 +35,8 @@ type Message struct {
 	// When to push the notification
 	SendAt time.Time `json:"send_at"`
 	// Type of event that triggered the notification
-	Event Event `json:"event" jsonschema:"enum=save_schedule,enum=clear_schedule,enum=clear_stored_schedule,enum=restore_schedule,enum=restore_schedule_eager,enum=clear_scheduled_jobs,enum=show_scheduled_jobs,enum=new_post,enum=godchild_request,enum=new_comment,enum=comment_reply,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
+	// next-line-generate event-enum-jsonschema-values
+	Event Event `json:"event" jsonschema:"enum=clear_scheduled_jobs,enum=clear_stored_schedule,enum=show_scheduled_jobs,enum=save_schedule,enum=restore_schedule,enum=restore_schedule_eager,enum=clear_schedule,enum=new_post,enum=godchild_request,enum=custom,enum=test,enum=godchild_accepted,enum=godchild_rejected,enum=pending_signup,enum=login_stuck,enum=booking_paid,enum=contribution_paid,enum=shotgun_opens_soon,enum=shotgun_closes_soon"`
 	// Churros ID of the ressource (the ticket, the post, the comment, etc)
 	// Used to determine to whom the notification should be sent
 	// For godchild_request, this is not a user id, but a godparent request id.

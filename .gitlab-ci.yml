@@ -33,7 +33,7 @@ test:typescript:
     - just gen_typescript
   script:
     - |
-      for file in typescript/*.ts; do
+      for file in {events.go,typescript/*.ts}; do
         if ! diff -q $file typescript_original/$(basename $file); then
           diff typescript_original/$(basename $file) $file
           echo "Generated file $file is different from original, please run 'just gen_typescript' and commit the changes"
