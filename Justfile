@@ -36,6 +36,21 @@ genprisma:
 gen_typescript:
 	bash scripts/sync-event-enum.sh
 	go run scripts/typing.go 
+	node typescript-dist/index.js 
+	just gen_typescript_lib_txt
+
+gen_typescript_lib_txt:
+	#!/bin/bash
+	mkdir -p testarea; cd testarea
+	npm init -y
+	jq '.type = "module"' < package.json > package.json.new
+	mv package.json.new package.json
+	cp ../typescript-dist/index.js notella.js
+	echo "import * as notella from './notella.js'; console.log(notella)" > index.js
+	node index.js > lib.txt
+	cp lib.txt ../typescript/lib.txt
+	cd ..
+	rm -rf testarea
 
 generate:
 	just updateschema

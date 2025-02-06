@@ -55,7 +55,7 @@ test:typescript:
       npm add -S git+$CI_PROJECT_URL#$CI_COMMIT_HASH
       echo "import * as notella from '@inp-net/notella'; console.log(notella)" > index.js
       node index.js > lib.txt
-      if ! diff -q lib.txt ../typescript/lib.txt; then
+      if ! diff -q lib.txt ../typescript_original/lib.txt; then
         diff lib.txt ../typescript/lib.txt
         echo Runtime library has different values, re-run just gen_typescript and commit the changes
         exit 1
