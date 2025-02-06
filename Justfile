@@ -36,7 +36,6 @@ genprisma:
 gen_typescript:
 	bash scripts/sync-event-enum.sh
 	go run scripts/typing.go 
-	node typescript-dist/index.js 
 	just gen_typescript_lib_txt
 
 gen_typescript_lib_txt:
