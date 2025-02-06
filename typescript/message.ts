@@ -13,6 +13,7 @@ export interface Message {
     body: string;
     /**
      * Type of event that triggered the notification
+     * next-line-generate event-enum-jsonschema-values
      */
     event: Event;
     /**
@@ -46,20 +47,19 @@ export interface Action {
 
 /**
  * Type of event that triggered the notification
+ * next-line-generate event-enum-jsonschema-values
  */
 export enum Event {
     BookingPaid = "booking_paid",
     ClearSchedule = "clear_schedule",
     ClearScheduledJobs = "clear_scheduled_jobs",
     ClearStoredSchedule = "clear_stored_schedule",
-    CommentReply = "comment_reply",
     ContributionPaid = "contribution_paid",
     Custom = "custom",
     GodchildAccepted = "godchild_accepted",
     GodchildRejected = "godchild_rejected",
     GodchildRequest = "godchild_request",
     LoginStuck = "login_stuck",
-    NewComment = "new_comment",
     NewPost = "new_post",
     PendingSignup = "pending_signup",
     RestoreSchedule = "restore_schedule",
