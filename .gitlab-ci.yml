@@ -22,7 +22,7 @@ stages:
   - build
 
 test:typescript:
-  image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  image: registry.inpt.fr/inp-net/images/go-just:1.23.6-1.39.0
   stage: test
   rules:
     - when: always
@@ -62,7 +62,7 @@ test:typescript:
       fi
 
 test:up-to-date-prisma-schema:
-  image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  image: registry.inpt.fr/inp-net/images/go-just:1.23.6-1.39.0
   stage: test
   rules:
     - when: always
@@ -78,7 +78,7 @@ test:up-to-date-prisma-schema:
       fi
 
 .gitops:
-  image: registry.inpt.fr/inp-net/images/go-just:1.23.5-1.39.0
+  image: registry.inpt.fr/inp-net/images/go-just:1.23.6-1.39.0
   before_script:
     - git config --global user.name gitlab
     - git config --global user.email "git@noreply.inpt.fr"
