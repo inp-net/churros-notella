@@ -95,11 +95,11 @@ func main() {
 		return
 	}
 
-	ll.Log("Initializing", "cyan", "Jetstream consumer [bold]NotellaConsumer[reset] with [bold]AckExplicitPolicy[reset]")
+	ll.Log("Initializing", "cyan", "Jetstream consumer [bold]%s[reset] with [bold]AckExplicitPolicy[reset]", notella.ConsumerName)
 
 	consumer, err := stream.CreateConsumer(ctx, jetstream.ConsumerConfig{
-		Durable:   "NotellaConsumer",
-		Name:      "NotellaConsumer",
+		Durable:   notella.ConsumerName,
+		Name:      notella.ConsumerName,
 		AckPolicy: jetstream.AckExplicitPolicy,
 	})
 	if err != nil {
@@ -107,7 +107,7 @@ func main() {
 		return
 	}
 
-	ll.Log("Starting", "cyan", "consumer [bold]NotellaConsumer[reset]")
+	ll.Log("Starting", "cyan", "consumer [bold]%s[reset]", notella.ConsumerName)
 
 	cc, err := consumer.Consume(
 		func(msg jetstream.Msg) {

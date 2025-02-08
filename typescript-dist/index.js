@@ -25,7 +25,9 @@ var Event = /* @__PURE__ */ ((Event2) => {
 // typescript/constants.ts
 var STREAM_NAME = "notella:stream";
 var SUBJECT_NAME = "notella:notification";
+var CONSUMER_NAME = "NotellaConsumer";
 export {
+  CONSUMER_NAME,
   Event,
   STREAM_NAME,
   SUBJECT_NAME

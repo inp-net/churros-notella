@@ -30,7 +30,11 @@ func main() {
 
 	// Also save useful constants
 	ll.Log("Writing", "cyan", "exported constants")
-	os.WriteFile("typescript/constants.ts", []byte(fmt.Sprintf("export const STREAM_NAME = '%s';\nexport const SUBJECT_NAME = '%s';\n", notella.StreamName, notella.SubjectName)), 0644)
+	os.WriteFile("typescript/constants.ts", printTypescriptConstants(
+		constant{"STREAM_NAME", notella.StreamName},
+		constant{"SUBJECT_NAME", notella.SubjectName},
+		constant{"CONSUMER_NAME", notella.ConsumerName},
+	), 0644)
 
 	// Write barrel
 	ll.Log("Writing", "cyan", "barrel file")
@@ -86,6 +90,19 @@ func formatEsbuildLocation(loc *esbuild.Location) string {
 		return ""
 	}
 	return fmt.Sprintf("[blue]%s:%d:%d[reset]", loc.File, loc.Line, loc.Column)
+}
+
+type constant struct {
+	name  string
+	value string
+}
+
+func printTypescriptConstants(declarations ...constant) []byte {
+	lines := make([]string, 0, len(declarations))
+	for _, decl := range declarations {
+		lines = append(lines, fmt.Sprintf("export const %s = '%s';", decl.name, decl.value))
+	}
+	return []byte(strings.Join(lines, "\n"))
 }
 
 func writeTypescriptDefinition(reflector *jsonschema.Reflector, typename string, typ interface{}, filename string) {

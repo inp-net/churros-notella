@@ -1,4 +1,5 @@
 [Module: null prototype] {
+  CONSUMER_NAME: 'NotellaConsumer',
   Event: {
     BookingPaid: 'booking_paid',
     ClearSchedule: 'clear_schedule',

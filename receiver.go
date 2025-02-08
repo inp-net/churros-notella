@@ -10,6 +10,7 @@ import (
 
 const StreamName = "notella:stream"
 const SubjectName = "notella:notification"
+const ConsumerName = "NotellaConsumer"
 
 func NatsReceiver(m jetstream.Msg) error {
 	var message Message
