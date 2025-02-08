@@ -140,6 +140,15 @@ func main() {
 	// Start healthcheck endpoint
 	go notella.StartHealthCheckEndpoint(config.HealthCheckPort)
 
+	// Self-check
+	ll.Log("Checking", "cyan", "health")
+	result := notella.CheckHealth()
+	if result.AllGood() {
+		ll.Log("Health check", "green", "succeeded")
+	} else {
+		ll.Error("Health check failed: %#v", result)
+	}
+
 	// Send EventShowScheduledJobs to the stream every 5 minutes and save schedule to redis
 	go func() {
 		for {

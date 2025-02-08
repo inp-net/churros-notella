@@ -10,6 +10,7 @@ import (
 	"firebase.google.com/go/v4/messaging"
 	ll "github.com/gwennlbh/label-logger-go"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 type HealthResponse struct {
@@ -19,12 +20,26 @@ type HealthResponse struct {
 	Firebase        bool `json:"firebase"`
 }
 
+func (r HealthResponse) AllGood() bool {
+	return r.Redis && r.NATS && r.ChurrosDatabase && r.Firebase
+}
+
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	ll.Debug("Checking health due to request from %s", r.RemoteAddr)
 	// Set the content type to JSON
 	w.Header().Set("Content-Type", "application/json")
 
 	// Example response (you can modify this with your own business logic)
+	response := CheckHealth()
+
+	// Marshal the response to JSON and write it to the response writer
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Unable to encode JSON", http.StatusInternalServerError)
+		return
+	}
+}
+
+func CheckHealth() HealthResponse {
 	response := HealthResponse{}
 
 	if err := CheckRedisHealth(); err != nil {
@@ -50,12 +65,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		response.Firebase = true
 	}
-
-	// Marshal the response to JSON and write it to the response writer
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, "Unable to encode JSON", http.StatusInternalServerError)
-		return
-	}
+	return response
 }
 
 func StartHealthCheckEndpoint(port int) {
@@ -79,12 +89,36 @@ func CheckNATSHealth() error {
 		return fmt.Errorf("could not connect to NATS at %s: %w", config.NatsURL, err)
 	}
 
-	_, err = nc.JetStream()
+	defer nc.Close()
+
+	js, err := jetstream.New(nc)
 	if err != nil {
 		return fmt.Errorf("could not connect to Jetstream: %w", err)
 	}
 
-	return nil
+	stream, err := js.CreateStream(context.Background(), jetstream.StreamConfig{
+		Name:     StreamName,
+		Subjects: []string{SubjectName},
+	})
+	if err != nil {
+		return fmt.Errorf("could not create stream: %w", err)
+	}
+
+	consumers := stream.ListConsumers(context.Background())
+	if consumers.Err() != nil {
+		return fmt.Errorf("could not list consumers: %w", consumers.Err())
+	}
+
+	for info := range consumers.Info() {
+		if consumers.Err() != nil {
+			return fmt.Errorf("could not get consumer info: %w", consumers.Err())
+		}
+		if info.Name == ConsumerName {
+			return nil
+		}
+	}
+
+	return fmt.Errorf("%s not connected to stream", ConsumerName)
 }
 
 func CheckChurrosDatabaseHealth() error {
