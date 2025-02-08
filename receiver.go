@@ -5,15 +5,15 @@ import (
 	"fmt"
 
 	ll "github.com/gwennlbh/label-logger-go"
-	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 const StreamName = "notella:stream"
 const SubjectName = "notella:notification"
 
-func NatsReceiver(m *nats.Msg) error {
+func NatsReceiver(m jetstream.Msg) error {
 	var message Message
-	err := json.Unmarshal(m.Data, &message)
+	err := json.Unmarshal(m.Data(), &message)
 	if err != nil {
 		return fmt.Errorf("while unmarshaling received message: %w", err)
 	}
