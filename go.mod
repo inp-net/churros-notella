@@ -3,7 +3,7 @@ module git.inpt.fr/churros/notella
 go 1.23.5
 
 require (
-	firebase.google.com/go/v4 v4.15.1
+	firebase.google.com/go/v4 v4.15.2
 	github.com/SherClockHolmes/webpush-go v1.4.0
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
