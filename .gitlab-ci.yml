@@ -99,7 +99,7 @@ update:prisma-schema:
     - 'git commit -m "chore(prisma): update schema.prisma after churros/churros change [ci release]"'
     - git push gitlab_origin HEAD:main
 
-release-after-prisma-schema-update:
+release-new-patch-version:
   extends: .gitops
   stage: build
   rules:
