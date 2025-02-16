@@ -48,6 +48,8 @@ func Receivers(message Message) ([]string, error) {
 		return receiversForShotgunOpens(message)
 	case EventShotgunClosesSoon:
 		return receiversForShotgunCloses(message)
+	case EventLoginStuck, EventPendingSignup:
+		return receiversForUserCandidate(message)
 	case EventTest:
 		return []string{}, fmt.Errorf("test event is for subscriptions, not users")
 	}
@@ -283,6 +285,59 @@ func receiversForShotgunCloses(message Message) (userIds []string, err error) {
 				break
 			}
 		}
+	}
+
+	return
+}
+
+func receiversForUserCandidate(message Message) (userIds []string, err error) {
+	// Find school of the user candidate or user
+	school, err := prisma.School.FindFirst(
+		db.School.Majors.Some(
+			db.Major.Or(
+				db.Major.Students.Some(db.User.ID.Equals(message.ChurrosObjectId)),
+				db.Major.UserCandidates.Some(db.UserCandidate.ID.Equals(message.ChurrosObjectId)),
+			),
+		),
+	).Exec(context.Background())
+
+	if err != nil {
+		return []string{}, fmt.Errorf("while getting school of user or usercandidate %s: %w", message.ChurrosObjectId, err)
+	}
+
+	systemAdmins, err := prisma.User.FindMany(
+		db.User.Admin.Equals(true),
+	).Select(
+		db.User.ID.Field(),
+	).Exec(context.Background())
+
+	if err != nil {
+		return []string{}, fmt.Errorf("while getting system admins: %w", err)
+	}
+
+	// If external account, send to system admins
+	if school == nil {
+		for _, admin := range systemAdmins {
+			userIds = append(userIds, admin.ID)
+		}
+		return
+	}
+
+	// If user or candidate has a school, get student association admins for that school
+	studentAssociationAdmins, err := prisma.User.FindMany(
+		db.User.AdminOfStudentAssociations.Some(
+			db.StudentAssociation.SchoolID.Equals(school.ID),
+		),
+	).Select(
+		db.User.ID.Field(),
+	).Exec(context.Background())
+
+	if err != nil {
+		return []string{}, fmt.Errorf("while getting student association admins for %+v: %w", school, err)
+	}
+
+	for _, admin := range studentAssociationAdmins {
+		userIds = append(userIds, admin.ID)
 	}
 
 	return
