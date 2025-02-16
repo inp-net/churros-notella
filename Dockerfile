@@ -1,6 +1,6 @@
 ARG TAG=dev
 
-FROM registry.inpt.fr/inp-net/images/go-just:1.23.6-1.39.0 AS builder
+FROM registry.inpt.fr/inp-net/images/go-just:1.24.0-1.39.0 AS builder
 
 # Set the working directory in the container
 WORKDIR /app
