@@ -12,6 +12,10 @@ export interface Message {
      */
     body: string;
     /**
+     * Clear scheduled jobs for the object_id before scheduling notifications
+     */
+    clear_schedule: boolean;
+    /**
      * Type of event that triggered the notification
      * next-line-generate event-enum-jsonschema-values
      */
@@ -52,7 +56,6 @@ export interface Action {
 export enum Event {
     BookingPaid = "booking_paid",
     ClearSchedule = "clear_schedule",
-    ClearScheduledJobs = "clear_scheduled_jobs",
     ClearStoredSchedule = "clear_stored_schedule",
     ContributionPaid = "contribution_paid",
     Custom = "custom",

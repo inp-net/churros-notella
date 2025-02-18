@@ -3,7 +3,6 @@
   Event: {
     BookingPaid: 'booking_paid',
     ClearSchedule: 'clear_schedule',
-    ClearScheduledJobs: 'clear_scheduled_jobs',
     ClearStoredSchedule: 'clear_stored_schedule',
     ContributionPaid: 'contribution_paid',
     Custom: 'custom',

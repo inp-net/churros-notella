@@ -2,7 +2,6 @@
 var Event = /* @__PURE__ */ ((Event2) => {
   Event2["BookingPaid"] = "booking_paid";
   Event2["ClearSchedule"] = "clear_schedule";
-  Event2["ClearScheduledJobs"] = "clear_scheduled_jobs";
   Event2["ClearStoredSchedule"] = "clear_stored_schedule";
   Event2["ContributionPaid"] = "contribution_paid";
   Event2["Custom"] = "custom";
