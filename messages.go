@@ -84,3 +84,7 @@ func (msg Message) JSONBytes() []byte {
 	}
 	return out
 }
+
+func (msg Message) String() string {
+	return fmt.Sprintf("%-10s | %-10s on %s", msg.Id, msg.Event, msg.ChurrosObjectId)
+}
