@@ -116,6 +116,7 @@ func UnscheduleAllForObject(objectId string, ofType ...Event) {
 		if job.ChurrosObjectId == objectId && filter(job) {
 			ll.Log("Unscheduling", "yellow", "%s | %s", job.Id, job.String())
 			job.Unschedule()
+			redisClient.Del(context.Background(), fmt.Sprintf("notella:message:%s", job.Id))
 		}
 	}
 }
