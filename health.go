@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 
 	"firebase.google.com/go/v4/messaging"
 	ll "github.com/gwennlbh/label-logger-go"
