@@ -12,9 +12,11 @@ export interface Message {
      */
     body: string;
     /**
-     * Clear scheduled jobs for the object_id before scheduling notifications
+     * Clear scheduled jobs for the given event types on the object_id before scheduling
+     * notifications
+     * TODO: generate jsonschema annotation
      */
-    clear_schedule: boolean;
+    clear_schedule_for: string[];
     /**
      * Type of event that triggered the notification
      * next-line-generate event-enum-jsonschema-values

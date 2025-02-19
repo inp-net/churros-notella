@@ -18,6 +18,7 @@ type Schedule struct {
 	cmap.ConcurrentMap[string, Message]
 }
 
+// schedules stores the scheduled messages in memory, as a mapping of job.Id -> job
 var schedules Schedule = Schedule{cmap.New[Message]()}
 
 func (job Message) Unschedule() {
@@ -90,10 +91,30 @@ func ClearInMemorySchedule() {
 	}
 }
 
-func UnscheduleAllForObject(objectId string) {
-	ll.Log("Unscheduling", "yellow", "all jobs for %s", objectId)
+// UnscheduleAllForObject unschedules all jobs for a given object ID. If any ofType is provided, only events of the types given will be unscheduled
+func UnscheduleAllForObject(objectId string, ofType ...Event) {
+	var filter func(Message) bool
+	if len(ofType) > 0 {
+		ll.Log("Unscheduling", "yellow", "all jobs for %s of type %v", objectId, ofType)
+
+		filter = func(job Message) bool {
+			for _, t := range ofType {
+				if job.Event == t {
+					return true
+				}
+			}
+			return false
+		}
+
+	} else {
+		ll.Log("Unscheduling", "yellow", "all jobs for %s", objectId)
+
+		filter = func(Message) bool { return true }
+	}
+
 	for _, job := range schedules.Items() {
-		if job.ChurrosObjectId == objectId {
+		if job.ChurrosObjectId == objectId && filter(job) {
+			ll.Log("Unscheduling", "yellow", "%s | %s", job.Id, job.String())
 			job.Unschedule()
 		}
 	}

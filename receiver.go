@@ -23,8 +23,8 @@ func NatsReceiver(m jetstream.Msg) error {
 		ll.Log("Received", "cyan", message.String())
 	}
 
-	if message.ClearSchedule {
-		UnscheduleAllForObject(message.ChurrosObjectId)
+	if len(message.ClearScheduleFor) > 0 {
+		UnscheduleAllForObject(message.ChurrosObjectId, message.ClearScheduleFor...)
 	}
 
 	message.Schedule()
