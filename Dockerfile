@@ -19,7 +19,7 @@ COPY . .
 RUN just build notella ${TAG}
 
 # Stage 2: Create a lightweight image with just the binary
-FROM alpine:3.21 AS runner
+FROM alpine:3.24 AS runner
 
 # Set the working directory in the container
 WORKDIR /app
